@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C-FRESH | Terms of use</title>
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"  type="text/css" />
+
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="32x32"
+        href="{% static 'images/favicon.png' %}"
+    />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:image" content="{% static 'images/mockup.png' %}" />
+    <meta name="description" content="We present to you the Moosakkai's CFRESH mobile app, Delivers chemical free fishes with a wide range of exquisite options. Experience the delicate fishes of Kerala at a reasonable and affordable price with Cfresh app." />
+    <meta name="keywords" content="cfresh, cfresh app, cfresh fish delivery, fish delivery kerala, home fresh deliver, fish home delivery kerala, cfresh calicut, fish calicut" />
+</head>
+<body>
+    <section id="title">
+        <section class="wrapper">
+            <h1>Terms of Use</h1>
+        </section>
+    </section>
+
+    <section id="content">
+        <section class="wrapper">
+            {% for ter in term %}
+                <p>{{ter.description|safe}}</p>
+            {% endfor %}
+        </section>
+    </section>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <a href="https://api.whatsapp.com/send?phone=%2B919446992992&text=Hy" class="float" target="_blank">
+        <i class="fa fa-whatsapp my-float"></i>
+    </a>
+</body>
+</html>
