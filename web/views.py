@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render, reverse
+from django.http.response import HttpResponseRedirect
 from .forms import ContactForm
 from .models import Link, Contact, Privacy, Terms, Return, About
 
@@ -10,7 +11,7 @@ def index(request):
         "title": "C-FRESH - Fresh Fish Anywhere.",
         "links": links,
     }
-    return render(request, "index.html", context=context)
+    return render(request, "web/index.html", context=context)
 
 
 
@@ -21,7 +22,7 @@ def privacy(request):
         "title": "C-FRESH - Privacy Policy",
         "privacies": privacies,
     }
-    return render(request,"privacy.html", context=context)
+    return render(request, "web/privacy.html", context=context)
 
 
 
@@ -32,7 +33,7 @@ def about(request):
         "title": "C-FRESH - About Us",
         "abouts": abouts,
     }
-    return render(request,"about.html", context=context)
+    return render(request, "web/about.html", context=context)
 
 
 
@@ -42,7 +43,7 @@ def contact(request):
     context= {
         "title": "C-FRESH - Contact Us",
     }
-    return render(request,"contact.html", context=context)
+    return render(request, "web/contact.html", context=context)
 
 
 
@@ -54,7 +55,7 @@ def return_refund(request):
         "title": "C-FRESH - Return & Refund Policy",
         "refunds": refunds,
     }
-    return render(request,"return.html", context=context)
+    return render(request, "web/return.html", context=context)
 
 
 
@@ -65,4 +66,4 @@ def terms(request):
         "title": "C-FRESH - Terms & Conditions",
         "term": term,
     }
-    return render(request,"terms.html", context=context)
+    return render(request, "web/terms.html", context=context)
