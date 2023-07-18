@@ -13,36 +13,18 @@ OFFER_MODEL = [
     ('CA', 'Category'),
     ('PR', 'Product'),
 ]
-
+    
 
 class FlashSale(models.Model):
     created_datetime = models.DateTimeField(auto_now=True)
-    from_time = models.DateTimeField()
-    to_time = models.DateTimeField()
     franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
+    franchise_item = models.ForeignKey(FranchiseItem, on_delete=models.CASCADE)
+    special_price = models.IntegerField(null=True, blank=True)
 
     class Meta:
         db_table = 'promotions_flas_sale'
         verbose_name = 'flas sale'
         verbose_name_plural = 'flas sales'
-        ordering = ('-id',)
-
-    def __str__(self):
-
-        return self.name
-    
-
-class FlashSaleItems(models.Model):
-    created_datetime = models.DateTimeField(auto_now=True)
-    sale = models.ForeignKey(FlashSale, on_delete=models.CASCADE)
-    franchise_item = models.ForeignKey(FranchiseItem, on_delete=models.CASCADE)
-    special_price = models.IntegerField(null=True, blank=True)
-
-    class Meta:
-        db_table = 'promotions_flas_sale_item'
-        verbose_name = 'flas sale item'
-        verbose_name_plural = 'flas sale items'
         ordering = ('-id',)
 
     def __str__(self):
@@ -53,10 +35,9 @@ class FlashSaleItems(models.Model):
 
 class TodayDeal(models.Model):
     created_datetime = models.DateTimeField(auto_now=True)
-    from_time = models.DateTimeField()
-    to_time = models.DateTimeField()
     franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
+    franchise_item = models.ForeignKey(FranchiseItem, on_delete=models.CASCADE)
+    special_price = models.IntegerField(null=True, blank=True)
 
     class Meta:
         db_table = 'promotions_today_deal'
@@ -66,25 +47,9 @@ class TodayDeal(models.Model):
 
     def __str__(self):
 
-        return self.name
-    
-
-class TodayDealItems(models.Model):
-    created_datetime = models.DateTimeField(auto_now=True)
-    sale = models.ForeignKey(TodayDeal, on_delete=models.CASCADE)
-    franchise_item = models.ForeignKey(FranchiseItem, on_delete=models.CASCADE)
-    special_price = models.IntegerField(null=True, blank=True)
-
-    class Meta:
-        db_table = 'promotions_today_deal_item'
-        verbose_name = 'todays deal item'
-        verbose_name_plural = 'todays deal items'
-        ordering = ('-id',)
-
-    def __str__(self):
-
         return self.franchise_item
     
+
 
 
 class Banner(models.Model):

@@ -3,7 +3,7 @@ from django.db import models
 from users.models import User
 from franchise.models import Franchise
 from products.models import FranchiseItem, VariantDetail
-from promotions.models import FlashSaleItems, TodayDealItems
+from promotions.models import FlashSale, TodayDeal
 
 ADDRESS_TYPE_CHOICE = (
     ("HM", "Home"),
@@ -66,8 +66,8 @@ class Cart(models.Model):
     created_datetime = models.DateTimeField(auto_now=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     item = models.ForeignKey(FranchiseItem, on_delete=models.CASCADE)
-    today_item = models.ForeignKey(TodayDealItems,on_delete=models.CASCADE, null=True, blank=True)
-    flash_item = models.ForeignKey(FlashSaleItems,on_delete=models.CASCADE, null=True, blank=True)
+    today_item = models.ForeignKey(TodayDeal,on_delete=models.CASCADE, null=True, blank=True)
+    flash_item = models.ForeignKey(FlashSale,on_delete=models.CASCADE, null=True, blank=True)
     varient = models.ForeignKey(VariantDetail,on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.IntegerField(default=1)
 

@@ -17,7 +17,7 @@ from franchise.models import FranchiseUser, Franchise, TimeSlot
 from customers.models import Customer, CustomerAddress, Cart
 from delivery.models import DeliveryAgent
 from notifications.models import Notification
-from promotions.models import FlashSale, FlashSaleItems, TodayDeal, TodayDealItems, Banner, StaticBanner, Poster, Offer
+from promotions.models import FlashSale, TodayDeal, Banner, StaticBanner, Poster, Offer
 from users.models import User, OTPVerifier
 
 from managers.forms import CategoryForm, ItemForm, ItemVariantForm

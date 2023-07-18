@@ -2,7 +2,7 @@ from django import forms
 
 from products.models import Category, Item, ItemVariant, VariantDetail, FranchiseItem
 from franchise.models import Franchise, TimeSlot
-from promotions.models import FlashSale, FlashSaleItems, TodayDeal, TodayDealItems, Banner, StaticBanner, Poster, Offer
+from promotions.models import FlashSale, TodayDeal, Banner, StaticBanner, Poster, Offer
 from users.models import User
 
 
