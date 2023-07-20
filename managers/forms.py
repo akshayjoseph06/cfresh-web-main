@@ -49,3 +49,78 @@ class FranchiseForm(forms.ModelForm):
             "delivery_distance":forms.widgets.NumberInput(attrs={"class": "form-control","placeholder":"Deliverable Distance in KM"}),
         }
     
+
+
+class VariantDetailForm(forms.ModelForm):
+    class Meta:
+        model = VariantDetail
+        fields = ["name","image","per_unit_price",]
+
+        widgets = {
+            "name":forms.widgets.TextInput(attrs={"class": "form-control","placeholder":"Vraiant Name"}),
+            "image":forms.widgets.FileInput(attrs={"class": "form-control"}),
+            "per_unit_price":forms.widgets.NumberInput(attrs={"class": "form-control","placeholder":"Unit Price"}),
+        }
+
+
+class FranchiseItemForm(forms.ModelForm):
+    class Meta:
+        model = FranchiseItem
+        fields = ["item","unit","unit_quantity","per_unit_price","net_weight","gross_weight","delivery_distance"]
+
+        widgets = {
+            "item":forms.widgets.Select(attrs={"class": "form-control"}),
+            "unit":forms.widgets.Select(attrs={"class": "form-control"}),
+            "unit_quantity":forms.widgets.NumberInput(attrs={"class": "form-control","placeholder":"Unit Quantity"}),
+            "per_unit_price":forms.widgets.NumberInput(attrs={"class": "form-control","placeholder":"Unit Price"}),
+            "net_weight":forms.widgets.TextInput(attrs={"class": "form-control","placeholder":"Net Weight"}),
+            "gross_weight":forms.widgets.TextInput(attrs={"class": "form-control","placeholder":"Gross Weight"}),
+            "delivery_distance":forms.widgets.NumberInput(attrs={"class": "form-control","placeholder":"Delivery Distance"}),
+        }
+
+
+class TimeSlotForm(forms.ModelForm):
+    class Meta:
+        model = TimeSlot
+        fields = ["franchise","from_time","to_time",]
+
+        widgets = {
+            "franchise":forms.widgets.Select(attrs={"class": "form-control"}),
+            "from_time":forms.widgets.TimeInput(attrs={"class": "form-control"}),
+            "to_time":forms.widgets.TimeInput(attrs={"class": "form-control"}),
+        }
+
+
+
+class FlashSaleForm(forms.ModelForm):
+    class Meta:
+        model = FlashSale
+        fields = ["franchise_item","special_price"]
+
+        widgets = {
+            "franchise_item":forms.widgets.Select(attrs={"class": "form-control"}),
+            "special_price":forms.widgets.NumberInput(attrs={"class": "form-control","placeholder":"Special Price"}),
+        }
+
+
+class TodayDealForm(forms.ModelForm):
+    class Meta:
+        model = TodayDeal
+        fields = ["franchise_item","special_price"]
+
+        widgets = {
+            "franchise_item":forms.widgets.Select(attrs={"class": "form-control"}),
+            "special_price":forms.widgets.NumberInput(attrs={"class": "form-control","placeholder":"Special Price"}),
+        }
+
+
+
+class TodayDealForm(forms.ModelForm):
+    class Meta:
+        model = TodayDeal
+        fields = ["franchise_item","special_price"]
+
+        widgets = {
+            "franchise_item":forms.widgets.Select(attrs={"class": "form-control"}),
+            "special_price":forms.widgets.NumberInput(attrs={"class": "form-control","placeholder":"Special Price"}),
+        }

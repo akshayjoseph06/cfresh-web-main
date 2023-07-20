@@ -403,17 +403,18 @@ def franchise_delete(request, id):
 
 
 ################################################################
-################   franchise       ############################
+################   Franchise Item      #########################
 ################################################################
 
 
 @login_required(login_url="/manager/login")
 @allow_manager
-def franchise_items(request):
+def franchise_items(request,id):
     user=request.user
     manager= Manager.objects.get(user=user)
+    franchise=Franchise.objects.get(id=id)
 
-    instances=FranchiseItem.objects.all()
+    instances=FranchiseItem.objects.filter(franchise=franchise)
     
     context= {
         "title": "C-FRESH | Dashboard",
@@ -427,7 +428,7 @@ def franchise_items(request):
 
 @login_required(login_url="/manager/login")
 @allow_manager
-def franchise_items_add(request):
+def franchise_items_add(request, id):
     pass
 
 
@@ -444,3 +445,95 @@ def franchise_items_delete(request, id):
     instance.delete()
     
     return HttpResponseRedirect(reverse("managers:franchise_items"))
+
+
+
+################################################################
+################   Item Variations      #########################
+################################################################
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def variations(request, id):
+    user=request.user
+    manager= Manager.objects.get(user=user)
+    item=FranchiseItem.objects.get(id=id)
+
+    instances=VariantDetail.objects.filter(item=item)
+    
+    context= {
+        "title": "C-FRESH | Dashboard",
+        "sub_title": "Franchise",
+        "name": "Variations List",
+        "manager":manager,
+        "instances":instances
+    }
+    return render(request, "manager/variations.html", context=context)
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def variations_add(request):
+    pass
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def variations_edit(request, id):
+    pass
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def variations_delete(request, id):
+    instance = VariantDetail.objects.get(id=id)
+    instance.delete()
+    
+    return HttpResponseRedirect(reverse("managers:variations"))
+
+
+
+
+################################################################
+################   Time Slots      #############################
+################################################################
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def timeslots(request):
+    user=request.user
+    manager= Manager.objects.get(user=user)
+
+    instances=TimeSlot.objects.all()
+    
+    context= {
+        "title": "C-FRESH | Dashboard",
+        "sub_title": "Franchise",
+        "name": "Time slots",
+        "manager":manager,
+        "instances":instances
+    }
+    return render(request, "manager/timeslots.html", context=context)
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def timeslots_add(request):
+    pass
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def timeslots_edit(request, id):
+    pass
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def timeslots_delete(request, id):
+    instance = TimeSlot.objects.get(id=id)
+    instance.delete()
+    
+    return HttpResponseRedirect(reverse("managers:timeslots"))
