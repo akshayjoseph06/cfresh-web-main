@@ -21,15 +21,10 @@ urlpatterns = [
     path('products/edit/<int:id>/', views.products_edit, name="products_edit"),
     path('products/delete/<int:id>/', views.products_delete, name="products_delete"),
 
-    path('varients/', views.varients, name="varients"),
-    path('varients/add/', views.varients_add, name="varients_add"),
-    path('varients/edit/<int:id>/', views.varients_edit, name="varients_edit"),
-    path('varients/delete/<int:id>/', views.varients_delete, name="varients_delete"),
-
-    # path('franchise/', views.franchise, name="franchise"),
-    # path('franchise/add/', views.franchise_add, name="franchise_add"),
-    # path('franchise/edit/<int:id>/', views.franchise_edit, name="franchise_edit"),
-    # path('franchise/delete/<int:id>/', views.franchise_delete, name="franchise_delete"),
+    path('franchise/', views.franchise, name="franchise"),
+    path('franchise/add/', views.franchise_add, name="franchise_add"),
+    path('franchise/edit/<int:id>/', views.franchise_edit, name="franchise_edit"),
+    path('franchise/delete/<int:id>/', views.franchise_delete, name="franchise_delete"),
 
     # path('franchise/items/', views.franchise_items, name="franchise_items"),
     # path('franchise/items/add/', views.franchise_items_add, name="franchise_items_add"),

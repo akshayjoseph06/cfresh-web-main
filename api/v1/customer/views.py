@@ -25,6 +25,8 @@ def otp_send(request):
     
     phone_number=request.data.get('phone_number')
 
+    phone_number = f'91{phone_number}'
+
     if User.objects.filter(phone_number=phone_number).exists():
         user = User.objects.get(phone_number=phone_number)
 

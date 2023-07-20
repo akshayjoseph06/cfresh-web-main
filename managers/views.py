@@ -12,7 +12,7 @@ from main.decorators import allow_manager
 from main.functions import generate_form_errors
 
 from managers.models import Manager
-from products.models import Category, Item, ItemVariant, VariantDetail, FranchiseItem
+from products.models import Category, Item, VariantDetail, FranchiseItem
 from franchise.models import FranchiseUser, Franchise, TimeSlot
 from customers.models import Customer, CustomerAddress, Cart
 from delivery.models import DeliveryAgent
@@ -20,7 +20,7 @@ from notifications.models import Notification
 from promotions.models import FlashSale, TodayDeal, Banner, StaticBanner, Poster, Offer
 from users.models import User, OTPVerifier
 
-from managers.forms import CategoryForm, ItemForm, ItemVariantForm
+from managers.forms import CategoryForm, ItemForm, FranchiseForm
 
 
 @login_required(login_url="/manager/login")
@@ -162,9 +162,9 @@ def categories_edit(request, id):
             message = generate_form_errors(form)
             form = CategoryForm(instance=instance)
             context= {
-                "title": "Manager Dashboard | Add Category",
+                "title": "Manager Dashboard | Edit Category",
                 "sub_title": "Categories",
-                "name": "Add Category",
+                "name": "Edit Category",
                 "error": True,
                 "message": message,
                 "form": form,
@@ -175,9 +175,9 @@ def categories_edit(request, id):
     else:
         form = CategoryForm(instance=instance)
         context= {
-            "title": "Manager Dashboard | Add Category",
+            "title": "Manager Dashboard | Edit Category",
             "sub_title": "Categories",
-            "name": "Add Category",
+            "name": "Edit Category",
             "form": form,
             "instance": instance,
         }
@@ -266,9 +266,9 @@ def products_edit(request, id):
             message = generate_form_errors(form)
             form = ItemForm(instance=instance)
             context= {
-                "title": "Manager Dashboard | Add Item",
+                "title": "Manager Dashboard | Edit Item",
                 "sub_title": "Products",
-                "name": "Add Item",
+                "name": "Edit Item",
                 "error": True,
                 "message": message,
                 "form": form,
@@ -279,9 +279,9 @@ def products_edit(request, id):
     else:
         form = ItemForm(instance=instance)
         context= {
-            "title": "Manager Dashboard | Add Item",
+            "title": "Manager Dashboard | Edit Item",
             "sub_title": "Products",
-            "name": "Add Item",
+            "name": "Edit Item",
             "instance": instance,
             "form": form,
         }
@@ -295,110 +295,6 @@ def products_delete(request, id):
     instance.delete()
     
     return HttpResponseRedirect(reverse("managers:products"))
-
-
-################################################################
-################   Varients       ############################
-################################################################
-
-
-@login_required(login_url="/manager/login")
-@allow_manager
-def varients(request):
-    user=request.user
-    manager= Manager.objects.get(user=user)
-
-    instances=ItemVariant.objects.all()
-    
-    context= {
-        "title": "C-FRESH | Dashboard",
-        "sub_title": "Varients",
-        "name": "Varients List",
-        "manager":manager,
-        "instances":instances
-    }
-    return render(request, "manager/varients.html", context=context)
-
-
-@login_required(login_url="/manager/login")
-@allow_manager
-def varients_add(request):
-    if request.method == "POST":
-        form = ItemVariantForm(request.POST,request.FILES)
-        if form.is_valid():
-            instance= form.save(commit=False)
-            instance.save()
-
-            return HttpResponseRedirect(reverse("managers:varients"))
-        else:
-            message = generate_form_errors(form)
-            form = ItemVariantForm()
-            context= {
-                "title": "Manager Dashboard | Add Item Variant",
-                "sub_title": "Products",
-                "name": "Add Item Variant",
-                "error": True,
-                "message": message,
-                "form": form,
-            }
-            return render(request, "manager/varients-add.html", context=context)
-
-    else:
-        form = ItemVariantForm()
-        context= {
-            "title": "Manager Dashboard | Add Item Variant",
-            "sub_title": "Products",
-            "name": "Add Item Variant",
-            "form": form,
-        }
-        return render(request, "manager/varients-add.html", context=context)
-
-
-@login_required(login_url="/manager/login")
-@allow_manager
-def varients_edit(request, id):
-    instance=ItemVariant.objects.get(id=id)
-
-    if request.method == "POST":
-        form = ItemVariantForm(request.POST,request.FILES,instance=instance)
-        if form.is_valid():
-            instance= form.save(commit=False)
-            instance.save()
-
-            return HttpResponseRedirect(reverse("managers:varients"))
-        else:
-            message = generate_form_errors(form)
-            form = ItemVariantForm(instance=instance)
-            context= {
-                "title": "Manager Dashboard | Add Item Variant",
-                "sub_title": "Products",
-                "name": "Add Item Variant",
-                "error": True,
-                "message": message,
-                "form": form,
-                "instance":instance
-            }
-            return render(request, "manager/varients-add.html", context=context)
-
-    else:
-        form = ItemVariantForm(instance=instance)
-        context= {
-            "title": "Manager Dashboard | Add Item Variant",
-            "sub_title": "Products",
-            "name": "Add Item Variant",
-            "form": form,
-            "instance":instance
-        }
-        return render(request, "manager/varients-add.html", context=context)
-
-
-@login_required(login_url="/manager/login")
-@allow_manager
-def varients_delete(request, id):
-    instance = ItemVariant.objects.get(id=id)
-    instance.delete()
-    
-    return HttpResponseRedirect(reverse("managers:varients"))
 
 
 
@@ -428,13 +324,73 @@ def franchise(request):
 @login_required(login_url="/manager/login")
 @allow_manager
 def franchise_add(request):
-    pass
+    if request.method == "POST":
+        form = FranchiseForm(request.POST,request.FILES)
+        if form.is_valid():
+            instance= form.save(commit=False)
+            instance.save()
+
+            return HttpResponseRedirect(reverse("managers:franchise"))
+        else:
+            message = generate_form_errors(form)
+            form = FranchiseForm()
+            context= {
+                "title": "Manager Dashboard | Add Franchise",
+                "sub_title": "Franchise",
+                "name": "Add Franchise",
+                "error": True,
+                "message": message,
+                "form": form,
+            }
+            return render(request, "manager/franchise-add.html", context=context)
+
+    else:
+        form = FranchiseForm()
+        context= {
+            "title": "Manager Dashboard | Add Franchise",
+            "sub_title": "Franchise",
+            "name": "Add Franchise",
+            "form": form,
+        }
+        return render(request, "manager/franchise-add.html", context=context)
 
 
 @login_required(login_url="/manager/login")
 @allow_manager
 def franchise_edit(request, id):
-    pass
+    instance=Franchise.objects.get(id=id)
+
+    if request.method == "POST":
+        form = FranchiseForm(request.POST,request.FILES,instance=instance)
+        if form.is_valid():
+            instance= form.save(commit=False)
+            instance.save()
+
+            return HttpResponseRedirect(reverse("managers:franchise"))
+        else:
+            message = generate_form_errors(form)
+            form = FranchiseForm(instance=instance)
+            context= {
+                "title": "Manager Dashboard | Edit Franchise",
+                "sub_title": "Franchise",
+                "name": "Edit Franchise",
+                "error": True,
+                "message": message,
+                "form": form,
+                "instance": instance,
+            }
+            return render(request, "manager/franchise-add.html", context=context)
+
+    else:
+        form = FranchiseForm(instance=instance)
+        context= {
+            "title": "Manager Dashboard | Edit Franchise",
+            "sub_title": "Franchise",
+            "name": "Edit Franchise",
+            "form": form,
+            "instance": instance,
+        }
+        return render(request, "manager/franchise-add.html", context=context)
 
 
 @login_required(login_url="/manager/login")

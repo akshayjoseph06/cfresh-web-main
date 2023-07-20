@@ -40,28 +40,11 @@ class Item(models.Model):
 
         return self.name
     
-
-class ItemVariant(models.Model):
-    created_datetime = models.DateTimeField(auto_now=True)
-    name = models.CharField(max_length=100)
-    is_active = models.BooleanField(default=True)
-
-
-    class Meta:
-        db_table = 'product_item_variant'
-        verbose_name = 'item variant'
-        verbose_name_plural = 'item variants'
-        ordering = ('-id',)
-
-    def __str__(self):
-
-        return self.name
     
 
 class VariantDetail(models.Model):
     created_datetime = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=100)
-    item_variant = models.ForeignKey(ItemVariant, on_delete=models.CASCADE)
     image = models.FileField(upload_to='item')
     unit = models.CharField(max_length=10)
     unit_quantity = models.FloatField(default=1)

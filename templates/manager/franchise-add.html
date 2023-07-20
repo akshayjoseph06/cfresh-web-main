@@ -1,0 +1,91 @@
+{% extends "base/admin-base.html" %} {% block container %} {% load static %}
+
+
+{% include 'includes/admin-nav.html' %}
+
+
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+
+            <div class="row page-titles mx-0">
+                <div class="col p-md-0">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">{{sub_title}}</a></li>
+                        <li class="breadcrumb-item active"><a href="javascript:void(0)">{{name}}</a></li>
+                    </ol>
+                </div>
+            </div>
+            <!-- row -->
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">{{name}}</h4>
+                                <div class="basic-form">
+                                    <form action="" method="post" class="ajax redirect" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="form-row">
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Franchise Name</label>
+                                                {{form.name}}
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Franchise Address</label>
+                                                {{form.address}}
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Location Latitude</label>
+                                                {{form.latitude}}
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Location Longitude</label>
+                                                {{form.longitude}}
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Base Delivery Charge for Base Distance</label>
+                                                {{form.base_charge}}
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Base Delivery Distance (KM)</label>
+                                                {{form.base_distance}}
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Extra Distance (KM)</label>
+                                                {{form.extra_distance}}
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Extra Delivery Charge / Extra Distance</label>
+                                                {{form.extra_charge}}
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Free Delivery Available Cart Value</label>
+                                                {{form.free_delivery_cart}}
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Franchise Deliverable Distance (KM)</label>
+                                                {{form.delivery_distance}}
+                                            </div>
+                                            
+                                            <button class=" btn login-form__btn submit button" type="submit">Submit</button>
+                                        </div>
+                                        {% if error %}
+                                            <p>{{message}}</p>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #/ container -->
+        </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+
+{% endblock %}
