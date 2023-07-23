@@ -105,6 +105,8 @@ def otp_verify(request):
     phone_number=request.data.get('phone_number')
     otp=request.data.get('otp')
 
+    phone_number = f'{91}{phone_number}'
+
     if phone_number and otp:
         user=User.objects.get(phone_number=phone_number)
         if OTPVerifier.objects.filter(user=user, otp=otp).exists():
@@ -199,6 +201,7 @@ def check_franchise(request):
         "data": {
             "message": "Franchise found",
             "franchise" :franchise,
+            "fr" :True,
         },
     }
     else:
@@ -208,6 +211,7 @@ def check_franchise(request):
         "data": {
             "message": "No franchise found",
             "franchise" :franchise,
+            "fr" :False,
         },
     }
     return Response(response_data)
