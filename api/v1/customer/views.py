@@ -125,24 +125,22 @@ def otp_verify(request):
                     "customer":customer,
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),
-                    "message": "Successfully logged in"
                 },
+                "message": "Successfully logged in"
 
             }
 
         else:
             response_data = {
             "status_code" : 6001,
-            "data": {
-                "message": "Invalid OTP"
-            },
+            "data": {},
+            "message": "Invalid OTP"
         }
     else:
         response_data = {
         "status_code" : 6001,
-        "data": {
-            "message": "Invalid OTP"
-        },
+        "data": {},
+        "message": "Invalid OTP"
     }
     return Response(response_data)
 
