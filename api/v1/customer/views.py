@@ -13,8 +13,8 @@ from users.models import User, OTPVerifier
 from customers.models import Customer, CustomerAddress
 from franchise.models import Franchise
 from promotions.models import Banner, StaticBanner, Poster
-from products.models import Category
-from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer
+from products.models import Category, FranchiseItem
+from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer
 
 conn = http.client.HTTPSConnection("api.msg91.com")
 
@@ -111,7 +111,7 @@ def otp_verify(request):
             otp_verifier=OTPVerifier.objects.get(user=user)
             refresh = RefreshToken.for_user(user)
             if Customer.objects.filter(user=user).exists():
-                 customer=True,
+                customer=True
             else: 
                 customer=False
 
@@ -327,3 +327,23 @@ def categories(request):
         "data": serializer.data,
     }
     return Response(response_data)
+
+
+
+@api_view(["GET"])
+@permission_classes ([AllowAny])
+def products(request,id):
+    category = Category.objects.get(id=id)
+    instances = FranchiseItem.objects.filter(item=category)
+
+    context = {
+        "request": request
+    }
+    serializer = ProductsSerializer(instances, many=True,context=context)
+
+    response_data = {
+        "staus_code": 6000,
+        "data": serializer.data,
+    }
+    return Response(response_data)
+

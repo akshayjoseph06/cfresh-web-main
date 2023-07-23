@@ -6,6 +6,14 @@ from promotions.models import FlashSale, TodayDeal, Banner, StaticBanner, Poster
 from users.models import User
 
 
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+class TimeInput(forms.TimeInput):
+    input_type = 'time'
+
+
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
@@ -79,6 +87,16 @@ class FranchiseItemForm(forms.ModelForm):
         }
 
 
+class FranchiseItemStockForm(forms.ModelForm):
+    class Meta:
+        model = FranchiseItem
+        fields = ["in_stock"]
+
+        widgets = {
+            "in_stock":forms.widgets.NumberInput(attrs={"class": "form-control","placeholder":"Stock"}),
+        }
+
+
 class TimeSlotForm(forms.ModelForm):
     class Meta:
         model = TimeSlot
@@ -86,8 +104,8 @@ class TimeSlotForm(forms.ModelForm):
 
         widgets = {
             "franchise":forms.widgets.Select(attrs={"class": "form-control"}),
-            "from_time":forms.widgets.TimeInput(attrs={"class": "form-control"}),
-            "to_time":forms.widgets.TimeInput(attrs={"class": "form-control"}),
+            "from_time":TimeInput(attrs={"class": "form-control"}),
+            "to_time":TimeInput(attrs={"class": "form-control"}),
         }
 
 

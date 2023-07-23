@@ -27,22 +27,22 @@ urlpatterns = [
     path('franchise/delete/<int:id>/', views.franchise_delete, name="franchise_delete"),
 
     path('franchise/items/<int:id>/', views.franchise_items, name="franchise_items"),
-    # path('franchise/items/add/<int:id>/', views.franchise_items_add, name="franchise_items_add"),
-    # path('franchise/items/edit/<int:id>/', views.franchise_items_edit, name="franchise_items_edit"),
-    # path('franchise/items/delete/<int:id>/', views.franchise_items_delete, name="franchise_items_delete"),
+    path('franchise/items/add/<int:id>/', views.franchise_items_add, name="franchise_items_add"),
+    path('franchise/items/edit/<int:id>/', views.franchise_items_edit, name="franchise_items_edit"),
+    path('franchise/items/delete/<int:id>/', views.franchise_items_delete, name="franchise_items_delete"),
 
     path('variations/<int:id>/', views.variations, name="variations"),
-    # path('variations/add/<int:id>/', views.variations_add, name="variations_add"),
-    # path('variations/edit/<int:id>/', views.variations_edit, name="variations_edit"),
-    # path('variations/delete/<int:id>/', views.variations_delete, name="variations_delete"),
+    path('variations/add/<int:id>/', views.variations_add, name="variations_add"),
+    path('variations/edit/<int:id>/', views.variations_edit, name="variations_edit"),
+    path('variations/delete/<int:id>/', views.variations_delete, name="variations_delete"),
 
-    # path('stocks/', views.stocks, name="stocks"),
-    # path('stocks/edit/<int:id>/', views.stocks_edit, name="stocks_edit"),
+    path('stocks/<int:id>/', views.stocks, name="stocks"),
+    path('stocks/edit/<int:id>/', views.stocks_edit, name="stocks_edit"),
 
     path('time-slots/', views.timeslots, name="timeslots"),
-    # path('time-slots/add/', views.timeslots_add, name="timeslots_add"),
-    # path('time-slots/edit/<int:id>/', views.timeslots_edit, name="timeslots_edit"),
-    # path('time-slots/delete/<int:id>/', views.timeslots_delete, name="timeslots_delete"),
+    path('time-slots/add/', views.timeslots_add, name="timeslots_add"),
+    path('time-slots/edit/<int:id>/', views.timeslots_edit, name="timeslots_edit"),
+    path('time-slots/delete/<int:id>/', views.timeslots_delete, name="timeslots_delete"),
 
     # path('customers/', views.customers, name="customers"),
 
