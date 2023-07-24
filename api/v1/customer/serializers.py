@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 
 from franchise.models import Franchise
-from promotions.models import Banner, Poster, StaticBanner
+from promotions.models import Banner, Poster, StaticBanner, FlashSale, TodayDeal
 from products.models import Category, Item, FranchiseItem, VariantDetail
 
 
@@ -54,4 +54,34 @@ class ProductsSerializer(ModelSerializer):
         request = self.context.get("request")
         varients = VariantDetail.objects.filter(item=instance)
         serializer = VarientsSerializer(varients, many=True, context={"request": request})
+        return serializer.data
+    
+
+class FlashSaleSerializer(ModelSerializer):
+
+    franchise_item = serializers.SerializerMethodField()
+
+    class Meta:
+        fields = ("id","franchise_item","special_price")
+        model = FlashSale
+
+    def get_franchise_item(self, instance):
+        request = self.context.get("request")
+        item = instance.franchise_item
+        serializer = ProductsSerializer(item, context={"request": request})
+        return serializer.data
+    
+
+class TodayDealSerializer(ModelSerializer):
+
+    franchise_item = serializers.SerializerMethodField()
+
+    class Meta:
+        fields = ("id","franchise_item","special_price")
+        model = TodayDeal
+
+    def get_franchise_item(self, instance):
+        request = self.context.get("request")
+        item = instance.franchise_item
+        serializer = ProductsSerializer(item, context={"request": request})
         return serializer.data

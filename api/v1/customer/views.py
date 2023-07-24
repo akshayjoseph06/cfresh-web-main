@@ -12,9 +12,9 @@ from django.conf import settings
 from users.models import User, OTPVerifier
 from customers.models import Customer, CustomerAddress
 from franchise.models import Franchise
-from promotions.models import Banner, StaticBanner, Poster
+from promotions.models import Banner, StaticBanner, Poster, FlashSale, TodayDeal
 from products.models import Category, FranchiseItem
-from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer
+from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer, FlashSaleSerializer, TodayDealSerializer
 
 conn = http.client.HTTPSConnection("api.msg91.com")
 
@@ -339,6 +339,46 @@ def categories(request):
         "request": request
     }
     serializer = CategorySerializer(instances, many=True,context=context)
+
+    response_data = {
+        "staus_code": 6000,
+        "data": serializer.data,
+    }
+    return Response(response_data)
+
+
+@api_view(["GET"])
+@permission_classes ([IsAuthenticated])
+def flash_sale(request):
+    user=request.user
+    customer = Customer.objects.get(user=user)
+    franchise= customer.current_franchise
+    instances = FlashSale.objects.filter(franchise=franchise)
+
+    context = {
+        "request": request
+    }
+    serializer = FlashSaleSerializer(instances, many=True,context=context)
+
+    response_data = {
+        "staus_code": 6000,
+        "data": serializer.data,
+    }
+    return Response(response_data)
+
+
+@api_view(["GET"])
+@permission_classes ([IsAuthenticated])
+def todays_deal(request):
+    user=request.user
+    customer = Customer.objects.get(user=user)
+    franchise= customer.current_franchise
+    instances = TodayDeal.objects.filter(franchise=franchise)
+
+    context = {
+        "request": request
+    }
+    serializer = TodayDealSerializer(instances, many=True,context=context)
 
     response_data = {
         "staus_code": 6000,

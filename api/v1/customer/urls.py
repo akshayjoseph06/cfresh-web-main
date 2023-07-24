@@ -21,8 +21,8 @@ urlpatterns = [
     path('products/<int:id>/', views.products),
     # path('product/<int:id>/', views.product),
 
-    # path('flash-sale/', views.flash_sale),
-    # path('todays-deal/', views.todays_deal),
+    path('flash-sale/', views.flash_sale),
+    path('todays-deal/', views.todays_deal),
 
     # path('cart/', views.cart),
     # path('cart/add/<int:id/', views.cart),
