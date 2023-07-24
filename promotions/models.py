@@ -29,7 +29,7 @@ class FlashSale(models.Model):
 
     def __str__(self):
 
-        return self.franchise_item
+        return self.franchise_item.item.name
     
 
 
@@ -47,7 +47,7 @@ class TodayDeal(models.Model):
 
     def __str__(self):
 
-        return self.franchise_item
+        return self.franchise_item.item.name
     
 
 

@@ -7,6 +7,7 @@ from users.models import User
 class Franchise(models.Model):
     created_datetime = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=256)
+    district = models.CharField(max_length=256, default="Malappuram")
     address = models.TextField()
     latitude = models.FloatField()
     longitude = models.FloatField()

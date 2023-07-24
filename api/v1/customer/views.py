@@ -110,8 +110,20 @@ def otp_verify(request):
             refresh = RefreshToken.for_user(user)
             if Customer.objects.filter(user=user).exists():
                 customer=True
+                cs=Customer.objects.get(user=user)
+                if cs.current_franchise is not None:
+                    franchise = cs.current_franchise.name
+                    district=cs.current_franchise.district
+                    fr=True
+                else:
+                    franchise =None
+                    district=None
+                    fr=False
             else: 
                 customer=False
+                franchise =None
+                district=None
+                fr=False
 
             response_data = {
                 "status_code" : 6000,
@@ -119,6 +131,9 @@ def otp_verify(request):
                     "id": user.id,
                     "pnone_number": user.phone_number,
                     "customer":customer,
+                    "franchise":franchise,
+                    "district":district,
+                    "fr":fr,
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),
                 },
@@ -212,20 +227,25 @@ def check_franchise(request):
 
 
 
-@api_view(["PUT"])
+@api_view(["POST"])
 @permission_classes ([IsAuthenticated])
 def update_franchise(request):
     franchise=request.data.get('franchise')
+    franchise=Franchise.objects.get(id=franchise)
     user=request.user
     customer=Customer.objects.get(user=user)
     customer.current_franchise=franchise
     customer.save()
 
+    fr=customer.current_franchise.name
+    district=customer.current_franchise.district
+
     response_data = {
         "status_code" : 6000,
         "data": {
             "message": "Franchise updated",
-            "franchise" :franchise,
+            "franchise" :fr,
+            "district" :district,
         },
     }
     return Response(response_data)

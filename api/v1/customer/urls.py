@@ -17,6 +17,7 @@ urlpatterns = [
     path('static/', views.static),
 
     path('categories/', views.categories),
+   # path('category/<int:id>/', views.category),
     path('products/<int:id>/', views.products),
     # path('product/<int:id>/', views.product),
 
