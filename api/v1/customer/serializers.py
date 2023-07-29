@@ -36,6 +36,12 @@ class CategorySerializer(ModelSerializer):
         fields = ("id","name","image")
         model = Category
 
+
+class ItemSerializer(ModelSerializer):
+    class Meta:
+        fields = ("id","name","image","description")
+        model = Item
+
 class VarientsSerializer(ModelSerializer):
     class Meta:
         fields = ("id","name","image","per_unit_price")
@@ -44,11 +50,18 @@ class VarientsSerializer(ModelSerializer):
 
 class ProductsSerializer(ModelSerializer):
 
+    item = serializers.SerializerMethodField()
     varients = serializers.SerializerMethodField()
 
     class Meta:
         fields = ("id","item","unit","unit_quantity","per_unit_price","varients")
         model = FranchiseItem
+
+    def get_item(self, instance):
+        request = self.context.get("request")
+        item = instance.item
+        serializer = ItemSerializer(item, context={"request": request})
+        return serializer.data
 
     def get_varients(self, instance):
         request = self.context.get("request")

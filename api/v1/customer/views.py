@@ -174,24 +174,21 @@ def register(request):
             customer.save()
             response_data = {
                 "status_code" : 6000,
-                "data": {
-                    "message": "Account Created"
-                },
+                "data": {},
+                "message": "Account Created",
             }
             
         else:
             response_data = {
             "status_code" : 6001,
-            "data": {
-                "message": "Email already registered"
-            },
+            "data": {},
+            "message": "Email already registered",
         }
     else:
         response_data = {
         "status_code" : 6001,
-        "data": {
-            "message": "Name & Email required"
-        },
+        "data": {},
+        "message": "Name & Email required"
     }
     
     return Response(response_data)
@@ -208,20 +205,20 @@ def check_franchise(request):
         response_data = {
         "status_code" : 6000,
         "data": {
-            "message": "Franchise found",
             "franchise" :franchise,
             "fr" :True,
         },
+        "message": "Franchise found",
     }
     else:
         franchise =None
         response_data = {
         "status_code" : 6001,
         "data": {
-            "message": "No franchise found",
             "franchise" :franchise,
             "fr" :False,
         },
+        "message": "No franchise found",
     }
     return Response(response_data)
 
@@ -243,10 +240,10 @@ def update_franchise(request):
     response_data = {
         "status_code" : 6000,
         "data": {
-            "message": "Franchise updated",
             "franchise" :fr,
             "district" :district,
         },
+        "message": "Franchise updated",
     }
     return Response(response_data)
 
