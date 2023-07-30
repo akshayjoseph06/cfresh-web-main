@@ -389,7 +389,7 @@ def todays_deal(request):
 @permission_classes ([AllowAny])
 def products(request,id):
     category = Category.objects.get(id=id)
-    instances = FranchiseItem.objects.filter(item=category)
+    instances = FranchiseItem.objects.filter(item__category=category)
 
     context = {
         "request": request
