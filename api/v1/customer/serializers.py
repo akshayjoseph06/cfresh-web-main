@@ -54,7 +54,7 @@ class ProductsSerializer(ModelSerializer):
     varients = serializers.SerializerMethodField()
 
     class Meta:
-        fields = ("id","item","unit","unit_quantity","per_unit_price","varients")
+        fields = ("id","item","unit","unit_quantity","per_unit_price","net_weight","gross_weight","varients")
         model = FranchiseItem
 
     def get_item(self, instance):

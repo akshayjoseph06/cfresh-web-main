@@ -20,7 +20,7 @@ from notifications.models import Notification
 from promotions.models import FlashSale, TodayDeal, Banner, StaticBanner, Poster, Offer
 from users.models import User, OTPVerifier
 
-from managers.forms import CategoryForm, ItemForm, FranchiseForm, VariantDetailForm, FranchiseItemForm, TimeSlotForm, FlashSaleForm, TodayDealForm, FranchiseItemStockForm
+from managers.forms import CategoryForm, ItemForm, FranchiseForm, VariantDetailForm, FranchiseItemForm, TimeSlotForm, FlashSaleForm, TodayDealForm, FranchiseItemStockForm, UserForm
 
 
 @login_required(login_url="/manager/login")
@@ -541,11 +541,13 @@ def variations(request, id):
 @allow_manager
 def variations_add(request, id):
     item=FranchiseItem.objects.get(id=id)
+    franchise=item.franchise
     if request.method == "POST":
         form = VariantDetailForm(request.POST,request.FILES)
         if form.is_valid():
             instance= form.save(commit=False)
             instance.item=item
+            instance.franchise=franchise
             instance.save()
 
             return HttpResponseRedirect(reverse("managers:franchise"))
@@ -828,3 +830,44 @@ def posters_delete(request, id):
     
     return HttpResponseRedirect(reverse("managers:posters"))
 
+
+
+################################################################
+################   Users      #############################
+################################################################
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def customers(request):
+    user=request.user
+    manager= Manager.objects.get(user=user)
+
+    instances=Customer.objects.all()
+    
+    context= {
+        "title": "C-FRESH | Dashboard",
+        "sub_title": "Users",
+        "name": "Customers",
+        "manager":manager,
+        "instances":instances
+    }
+    return render(request, "manager/customers.html", context=context)
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def franchise_users(request):
+    user=request.user
+    manager= Manager.objects.get(user=user)
+
+    instances=FranchiseUser.objects.all()
+    
+    context= {
+        "title": "C-FRESH | Dashboard",
+        "sub_title": "Users",
+        "name": "Franchise Users",
+        "manager":manager,
+        "instances":instances,
+    }
+    return render(request, "manager/f-users.html", context=context)

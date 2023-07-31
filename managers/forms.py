@@ -7,6 +7,19 @@ from users.models import User
 
 
 
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["first_name","phone_number","email","password"]
+
+        widgets = {
+            "first_name":forms.widgets.TextInput(attrs={"class": "form-control","placeholder":"Owner Name"}),
+            "phone_number":forms.widgets.NumberInput(attrs={"class": "form-control","placeholder":"Mobile Number"}),
+            "email":forms.widgets.EmailInput(attrs={"class": "form-control","placeholder":"Email Address"}),
+            "password":forms.widgets.PasswordInput(attrs={"class": "form-control","placeholder":"Password"}),
+        }
+
+
 class DateInput(forms.DateInput):
     input_type = 'date'
 

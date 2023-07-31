@@ -44,9 +44,9 @@ urlpatterns = [
     path('time-slots/edit/<int:id>/', views.timeslots_edit, name="timeslots_edit"),
     path('time-slots/delete/<int:id>/', views.timeslots_delete, name="timeslots_delete"),
 
-    # path('customers/', views.customers, name="customers"),
+    path('customers/', views.customers, name="customers"),
 
-    # path('franchise/users/', views.franchise_users, name="franchise_users"),
+    path('franchise/users/', views.franchise_users, name="franchise_users"),
     # path('franchise/users/add/', views.franchise_users_add, name="franchise_users_add"),
     # path('franchise/users/edit/<int:id>/', views.franchise_users_edit, name="franchise_users_edit"),
     # path('franchise/users/delete/<int:id>/', views.franchise_users_delete, name="franchise_users_delete"),
