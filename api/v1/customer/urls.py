@@ -24,6 +24,11 @@ urlpatterns = [
     path('flash-sale/', views.flash_sale),
     path('todays-deal/', views.todays_deal),
 
+    path('address/', views.address),
+    path('address/add/', views.address_add),
+    # path('address/edit/<int:id>/', views.address_edit),
+    path('address/delete/<int:id>/', views.address_delete),
+
     # path('cart/', views.cart),
     # path('cart/add/<int:id/', views.cart),
     # path('cart/plus/<int:id/', views.cart),

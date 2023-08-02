@@ -14,7 +14,7 @@ from customers.models import Customer, CustomerAddress
 from franchise.models import Franchise
 from promotions.models import Banner, StaticBanner, Poster, FlashSale, TodayDeal
 from products.models import Category, FranchiseItem
-from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer, FlashSaleSerializer, TodayDealSerializer
+from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer, FlashSaleSerializer, TodayDealSerializer, AddressListSerializer, AddAddressSerializer
 
 conn = http.client.HTTPSConnection("api.msg91.com")
 
@@ -386,7 +386,7 @@ def todays_deal(request):
 
 
 @api_view(["GET"])
-@permission_classes ([AllowAny])
+@permission_classes ([IsAuthenticated])
 def products(request,id):
     category = Category.objects.get(id=id)
     instances = FranchiseItem.objects.filter(item__category=category)
@@ -401,4 +401,81 @@ def products(request,id):
         "data": serializer.data,
     }
     return Response(response_data)
+
+
+
+@api_view(["GET"])
+@permission_classes ([IsAuthenticated])
+def address(request):
+    user=request.user
+    customer = Customer.objects.get(user=user)
+    instances = customer.address
+    
+    current_address= customer.current_address
+
+    context = {
+        "request": request
+    }
+    serializer = AddressListSerializer(instances, many=True,context=context)
+    current = AddressListSerializer(current_address, context=context)
+
+    response_data = {
+        "staus_code": 6000,
+        "data": {
+            "address": serializer.data,
+            "current":current.data,
+        }
+    }
+    return Response(response_data)
+
+
+
+@api_view(["POST"])
+@permission_classes ([IsAuthenticated])
+def address_add(request):
+    user=request.user
+    customer = Customer.objects.get(user=user)
+
+    serializer = AddAddressSerializer(data=request.data)
+
+    if serializer.is_valid():
+        instance = serializer.save()
+
+        customer.current_address=instance
+        customer.address.add(instance)
+        customer.save()
+
+        response_data = {
+                "staus_code": 6000,
+                "data": serializer.data,
+                "status":"Address Added",
+            }
+        
+    else:
+        response_data = {
+            "staus_code": 6001,
+            "data": serializer.data,
+            "status":"Error Occured."
+        }
+
+    return Response(response_data)
+
+
+@api_view(["POST"])
+@permission_classes ([IsAuthenticated])
+def address_delete(request, id):
+
+    instance = CustomerAddress.objects.get(id=id)
+
+    instance.delete()
+
+    response_data = {
+        "staus_code": 6001,
+        "data": [],
+        "status":"Address Deleted"
+    }
+
+    return Response(response_data)
+
+
 

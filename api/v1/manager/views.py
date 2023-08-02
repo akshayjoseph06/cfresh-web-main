@@ -299,7 +299,7 @@ def franchise(request):
 
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 @permission_classes ([IsAuthenticated])
 def franchise_add(request):
     user=request.user

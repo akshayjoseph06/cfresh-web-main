@@ -5,23 +5,16 @@ from franchise.models import Franchise
 from products.models import FranchiseItem, VariantDetail
 from promotions.models import FlashSale, TodayDeal
 
-ADDRESS_TYPE_CHOICE = (
-    ("HM", "Home"),
-    ("WO", "Work"),
-    ("HT", "Hotel"),
-    ("OT", "Other")
-)
 
 class CustomerAddress(models.Model):
     name = models.CharField(max_length=256, null=True, blank=True)
     phone_number = models.CharField(max_length=12, null=True, blank=True)
-    address_type = models.CharField(max_length=2, choices=ADDRESS_TYPE_CHOICE)
+    address_type = models.CharField(max_length=10)
     address = models.TextField()
     street = models.CharField(max_length=100, null=True, blank=True)
     land_mark = models.CharField(max_length=100, null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    active_address = models.BooleanField(default=False)
 
 
     class Meta:

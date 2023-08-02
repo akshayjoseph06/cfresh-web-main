@@ -5,6 +5,7 @@ from rest_framework import serializers
 from franchise.models import Franchise
 from promotions.models import Banner, Poster, StaticBanner, FlashSale, TodayDeal
 from products.models import Category, Item, FranchiseItem, VariantDetail
+from customers.models import Customer, CustomerAddress
 
 
 class FranchiseSerializer(ModelSerializer):
@@ -98,3 +99,18 @@ class TodayDealSerializer(ModelSerializer):
         item = instance.franchise_item
         serializer = ProductsSerializer(item, context={"request": request})
         return serializer.data
+    
+
+
+class AddAddressSerializer(ModelSerializer):
+
+    class Meta:
+        fields = ("name","phone_number","address_type", "address", "street", "land_mark", "latitude", "longitude",)
+        model = CustomerAddress
+
+
+class AddressListSerializer(ModelSerializer):
+
+    class Meta:
+        fields = ("id","name","phone_number","address_type", "address", "street", "land_mark",)
+        model = CustomerAddress
