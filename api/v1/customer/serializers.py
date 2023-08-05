@@ -206,7 +206,7 @@ class CartListSerializer(ModelSerializer):
 
 
     class Meta:
-        fields = ("id","cart_amount","cart_qty","unit", "name", "image")
+        fields = ("id","cart_amount","cart_qty","unit", "name", "image","item_type")
         model = Cart
 
     def get_name(self, instance):

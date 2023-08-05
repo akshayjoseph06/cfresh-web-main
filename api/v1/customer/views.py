@@ -13,7 +13,7 @@ from users.models import User, OTPVerifier
 from customers.models import Customer, CustomerAddress, Cart
 from franchise.models import Franchise
 from promotions.models import Banner, StaticBanner, Poster, FlashSale, TodayDeal
-from products.models import Category, FranchiseItem
+from products.models import Category, FranchiseItem, VariantDetail
 from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer, FlashSaleSerializer, TodayDealSerializer, AddressListSerializer, AddAddressSerializer, CartListSerializer
 
 conn = http.client.HTTPSConnection("api.msg91.com")
@@ -502,3 +502,24 @@ def cart(request):
     return Response(response_data)
 
 
+
+@api_view(["POST"])
+@permission_classes ([IsAuthenticated])
+def cart_add(request,id):
+    user=request.user
+    customer = Customer.objects.get(user=user)
+
+    franchise = customer.current_franchise
+
+    item_type=request.data.get('item_type')
+    item_id = request.data.get('item_id')
+
+    if item_type == 'FI':
+        item = FranchiseItem.objects.get(id=item_id)
+    elif item_type == 'VR':
+        variant = VariantDetail.objects.get(id=item_id)
+        item = variant.item
+    elif item_type == 'TD':
+        pass
+    elif item_type == 'FS':
+        pass
