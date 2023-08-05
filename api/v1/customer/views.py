@@ -10,11 +10,11 @@ from django.contrib.auth import authenticate
 from django.conf import settings
 
 from users.models import User, OTPVerifier
-from customers.models import Customer, CustomerAddress
+from customers.models import Customer, CustomerAddress, Cart
 from franchise.models import Franchise
 from promotions.models import Banner, StaticBanner, Poster, FlashSale, TodayDeal
 from products.models import Category, FranchiseItem
-from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer, FlashSaleSerializer, TodayDealSerializer, AddressListSerializer, AddAddressSerializer
+from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer, FlashSaleSerializer, TodayDealSerializer, AddressListSerializer, AddAddressSerializer, CartListSerializer
 
 conn = http.client.HTTPSConnection("api.msg91.com")
 
@@ -477,5 +477,28 @@ def address_delete(request, id):
 
     return Response(response_data)
 
+
+@api_view(["GET"])
+@permission_classes ([IsAuthenticated])
+def cart(request):
+
+    user=request.user
+    customer = Customer.objects.get(user=user)
+
+    franchise = customer.current_franchise
+
+    instances = Cart.objects.filter(franchise=franchise, customer=customer)
+
+    context = {
+        "request": request
+    }
+
+    serializer = CartListSerializer(instances, many=True,context=context)
+
+    response_data = {
+        "staus_code": 6000,
+        "data": serializer.data,
+    }
+    return Response(response_data)
 
 

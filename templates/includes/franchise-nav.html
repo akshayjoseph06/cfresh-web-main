@@ -26,7 +26,7 @@
         ***********************************-->
         <div class="nav-header">
             <div class="brand-logo">
-                <a href="{% url 'managers:index' %}">
+                <a href="{% url 'franchise:index' %}">
                     <h2 class="text-white">CFRESH</h2>
                 </a>
             </div>
@@ -58,11 +58,11 @@
                                 <div class="dropdown-content-body">
                                     <ul>
                                         <li>
-                                            <a href="#"><i class="icon-user"></i> <span>Profile</span></a>
+                                            <a href="{% url 'franchise:account' %}"><i class="icon-user"></i> <span>Profile</span></a>
                                         </li>
                                         
                                         <hr class="my-2">
-                                        <li><a href="#"><i class="icon-key"></i> <span>Logout</span></a></li>
+                                        <li><a href="{% url 'franchise:logout' %}"><i class="icon-key"></i> <span>Logout</span></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -82,25 +82,23 @@
             <div class="nk-nav-scroll">
                 <ul class="metismenu" id="menu">
                     <li>
-                        <a href="{% url 'managers:index' %}" aria-expanded="false">
+                        <a href="{% url 'franchise:index' %}" aria-expanded="false">
                             <i class="icon-home menu-icon"></i><span class="nav-text">Dashboard</span>
                         </a>
+                    </li>
+                    <li class="mega-menu mega-menu-sm">
+                        <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                            <i class="icon-globe-alt menu-icon"></i><span class="nav-text">Items</span>
+                        </a>
+                        <ul aria-expanded="false">
+                            <li><a href="#">Items</a></li>
+                            <li><a href="#">Variants</a></li>
+                        </ul>
                     </li>
                     <li>
                         <a href="#" aria-expanded="false">
                             <i class="icon-speedometer menu-icon"></i><span class="nav-text">Orders</span>
                         </a>
-                    </li>
-                    <li class="mega-menu mega-menu-sm">
-                        <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                            <i class="icon-cloud-upload menu-icon"></i><span class="nav-text">Products</span>
-                        </a>
-                        <ul aria-expanded="false">
-                            <li><a href="#">Items</a></li>
-                            <li><a href="#">Varients</a></li>
-                            <li><a href="#">Stock</a></li>
-                            <li><a href="#">Time Slots</a></li>
-                        </ul>
                     </li>
                     <li class="mega-menu mega-menu-sm">
                         <a class="has-arrow" href="javascript:void()" aria-expanded="false">
@@ -120,7 +118,6 @@
                         <ul aria-expanded="false">
                             <li><a href="#">Today's Deals</a></li>
                             <li><a href="#">Flash Sales</a></li>
-                            <li><a href="#">Offers</a></li>
                         </ul>
                     </li>
                     <li class="mega-menu mega-menu-sm">
@@ -128,8 +125,8 @@
                             <i class="icon-wrench menu-icon"></i><span class="nav-text">Settings</span>
                         </a>
                         <ul aria-expanded="false">
-                            <li><a href="#">Profile</a></li>
-                            <li><a href="#">Logout</a></li>
+                            <li><a href="{% url 'franchise:account' %}">Profile</a></li>
+                            <li><a href="{% url 'franchise:logout' %}">Logout</a></li>
                         </ul>
                     </li>
                 </ul>

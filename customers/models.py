@@ -6,6 +6,14 @@ from products.models import FranchiseItem, VariantDetail
 from promotions.models import FlashSale, TodayDeal
 
 
+CART_TYPE = [
+    ("FI", "Franchise Item"),
+    ("VR", "Variant"),
+    ("TD", "Todays Deal"),
+    ("FS", "Flash Sale"),
+]
+
+
 class CustomerAddress(models.Model):
     name = models.CharField(max_length=256, null=True, blank=True)
     phone_number = models.CharField(max_length=12, null=True, blank=True)
@@ -54,10 +62,13 @@ class Customer(models.Model):
 class Cart(models.Model):
     created_datetime = models.DateTimeField(auto_now=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    item = models.ForeignKey(FranchiseItem, on_delete=models.CASCADE)
+    franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE)
+    item = models.ForeignKey(FranchiseItem, on_delete=models.CASCADE, null=True, blank=True)
     today_item = models.ForeignKey(TodayDeal,on_delete=models.CASCADE, null=True, blank=True)
     flash_item = models.ForeignKey(FlashSale,on_delete=models.CASCADE, null=True, blank=True)
     varient = models.ForeignKey(VariantDetail,on_delete=models.CASCADE, null=True, blank=True)
+    item_type = models.CharField(max_length=50, choices=CART_TYPE)
+    cart_amount = models.FloatField()
     quantity = models.IntegerField(default=1)
 
 
@@ -69,4 +80,4 @@ class Cart(models.Model):
 
     def __str__(self):
 
-        return self.customer
+        return self.customer.user.phone_number

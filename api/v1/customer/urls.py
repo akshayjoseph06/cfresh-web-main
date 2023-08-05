@@ -29,7 +29,7 @@ urlpatterns = [
     # path('address/edit/<int:id>/', views.address_edit),
     path('address/delete/<int:id>/', views.address_delete),
 
-    # path('cart/', views.cart),
+    path('cart/', views.cart),
     # path('cart/add/<int:id/', views.cart),
     # path('cart/plus/<int:id/', views.cart),
     # path('cart/minus/<int:id/', views.cart),

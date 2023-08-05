@@ -10,6 +10,7 @@ urlpatterns = [
     path('', include('web.urls',namespace="web")),
     path('api/v1/franchise/', include('api.v1.franchise.urls')),
     path('manager/', include('managers.urls',namespace="managers")),
+    path('franchise/', include('franchise.urls',namespace="franchise")),
 
 ]
 
