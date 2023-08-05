@@ -30,9 +30,9 @@ urlpatterns = [
     path('address/delete/<int:id>/', views.address_delete),
 
     path('cart/', views.cart),
-    path('cart/add/<int:id/', views.cart_add),
-    # path('cart/plus/<int:id/', views.cart),
-    # path('cart/minus/<int:id/', views.cart),
+    path('cart/add/', views.cart_add),
+    path('cart/plus/', views.cart_plus),
+    path('cart/minus/', views.cart_minus),
 
     # path('time-slot/', views.time_slot),
 ]

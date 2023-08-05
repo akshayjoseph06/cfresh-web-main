@@ -15,6 +15,7 @@ from franchise.models import Franchise
 from promotions.models import Banner, StaticBanner, Poster, FlashSale, TodayDeal
 from products.models import Category, FranchiseItem, VariantDetail
 from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer, FlashSaleSerializer, TodayDealSerializer, AddressListSerializer, AddAddressSerializer, CartListSerializer
+from franchise.utils import haversine
 
 conn = http.client.HTTPSConnection("api.msg91.com")
 
@@ -505,21 +506,207 @@ def cart(request):
 
 @api_view(["POST"])
 @permission_classes ([IsAuthenticated])
-def cart_add(request,id):
+def cart_add(request):
     user=request.user
     customer = Customer.objects.get(user=user)
 
     franchise = customer.current_franchise
+
+    lat1 = franchise.latitude
+    long1 = franchise.longitude
+    delivery_distance = franchise.delivery_distance
 
     item_type=request.data.get('item_type')
     item_id = request.data.get('item_id')
 
     if item_type == 'FI':
         item = FranchiseItem.objects.get(id=item_id)
+        cart_amount = item.per_unit_price
     elif item_type == 'VR':
         variant = VariantDetail.objects.get(id=item_id)
         item = variant.item
+        cart_amount = variant.per_unit_price
     elif item_type == 'TD':
-        pass
+        todays_deal = TodayDeal.objects.get(id=item_id)
+        item = todays_deal.franchise_item
+        cart_amount = todays_deal.special_price
     elif item_type == 'FS':
-        pass
+        flash_sale = FlashSale.objects.get(id=item_id)
+        item = flash_sale.franchise_item
+        cart_amount = flash_sale.special_price
+
+    if item.delivery_distance > 0:
+        delivery_distance = item.delivery_distance
+
+    if customer.current_address is not None:
+        address = customer.current_address
+        lat2 = address.latitude
+        long2 = address.longitude
+
+        distance = haversine(long2, lat2, long1, lat1)
+
+        if distance < delivery_distance :
+            if item_type == 'FI':
+                cart = Cart.objects.create(
+                    customer=customer,
+                    franchise=franchise,
+                    item=item,
+                    item_type=item_type,
+                    cart_amount=cart_amount,
+                    quantity=1,
+                )
+            elif item_type == 'VR':
+                cart = Cart.objects.create(
+                    customer=customer,
+                    franchise=franchise,
+                    varient=item,
+                    item_type=item_type,
+                    cart_amount=cart_amount,
+                    quantity=1,
+                )
+            elif item_type == 'TD':
+                cart = Cart.objects.create(
+                    customer=customer,
+                    franchise=franchise,
+                    today_item=item,
+                    item_type=item_type,
+                    cart_amount=cart_amount,
+                    quantity=1,
+                )
+            elif item_type == 'FS':
+                cart = Cart.objects.create(
+                    customer=customer,
+                    franchise=franchise,
+                    flash_item=item,
+                    item_type=item_type,
+                    cart_amount=cart_amount,
+                    quantity=1,
+                )
+
+            response_data = {
+                "staus_code": 6000,
+                "data": {
+                    "message": "Successfully added to cart",
+                    "distance": distance,
+                },
+            }
+
+        else:
+            response_data = {
+                "staus_code": 6000,
+                "data": {
+                    "title": "Change Delivery Address",
+                    "message": "Item is not deliverable in your area. Please change your address.",
+                    "distance": distance,
+                },
+            }
+    else:
+        response_data = {
+            "staus_code": 6000,
+            "data": {
+                "address": {},
+                "title": "Add Delivery Address",
+                "message": "Delvery address not found. Please add a delivery address."
+            },
+        }
+
+    return Response(response_data)
+
+
+
+@api_view(["POST"])
+@permission_classes ([IsAuthenticated])
+def cart_plus(request):
+    user=request.user
+    customer = Customer.objects.get(user=user)
+
+    cart_id = request.data.get('cart_id')
+
+    cart = Cart.objects.get(id=cart_id)
+
+    item_type = cart.item_type
+
+    if item_type == 'FI':
+        item = cart.item
+        cart_amount = item.per_unit_price
+        cart.cart_amount += cart_amount
+        cart.quantity += 1
+    elif item_type == 'VR':
+        variant = cart.varient
+        item = variant.item
+        cart_amount = variant.per_unit_price
+        cart.cart_amount += cart_amount
+        cart.quantity += 1
+    elif item_type == 'TD':
+        todays_deal = cart.today_item
+        item = todays_deal.franchise_item
+        cart_amount = todays_deal.special_price
+        cart.cart_amount += cart_amount
+        cart.quantity += 1
+    elif item_type == 'FS':
+        flash_sale = cart.flash_item
+        item = flash_sale.franchise_item
+        cart_amount = flash_sale.special_price
+        cart.cart_amount += cart_amount
+        cart.quantity += 1
+
+    cart.save()
+
+    response_data = {
+        "staus_code": 6000,
+        "data": {
+            "message": "Cart updated successfully"
+        },
+    }
+    return Response(response_data)
+
+
+@api_view(["POST"])
+@permission_classes ([IsAuthenticated])
+def cart_minus(request):
+    user=request.user
+    customer = Customer.objects.get(user=user)
+
+    cart_id = request.data.get('cart_id')
+
+    cart = Cart.objects.get(id=cart_id)
+
+    cart.quantity -= 1
+
+    item_type = cart.item_type
+
+    if cart.quantity == 0:
+        cart.delete()
+
+    else:
+
+        if item_type == 'FI':
+            item = cart.item
+            cart_amount = item.per_unit_price
+            cart.cart_amount -= cart_amount
+        elif item_type == 'VR':
+            variant = cart.varient
+            item = variant.item
+            cart_amount = variant.per_unit_price
+            cart.cart_amount -= cart_amount
+        elif item_type == 'TD':
+            todays_deal = cart.today_item
+            item = todays_deal.franchise_item
+            cart_amount = todays_deal.special_price
+            cart.cart_amount -= cart_amount
+        elif item_type == 'FS':
+            flash_sale = cart.flash_item
+            item = flash_sale.franchise_item
+            cart_amount = flash_sale.special_price
+            cart.cart_amount -= cart_amount
+
+        cart.save()
+
+    response_data = {
+        "staus_code": 6000,
+        "data": {
+            "message": "Cart updated successfully"
+        },
+    }
+    return Response(response_data)
+
