@@ -1,6 +1,8 @@
 import random
 import http.client
 import json
+import datetime
+
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -8,13 +10,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.contrib.auth import authenticate
 from django.conf import settings
+from django.db.models import Sum
+from django.db.models import Q
 
 from users.models import User, OTPVerifier
 from customers.models import Customer, CustomerAddress, Cart
-from franchise.models import Franchise
+from franchise.models import Franchise, TimeSlot
 from promotions.models import Banner, StaticBanner, Poster, FlashSale, TodayDeal
 from products.models import Category, FranchiseItem, VariantDetail
-from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer, FlashSaleSerializer, TodayDealSerializer, AddressListSerializer, AddAddressSerializer, CartListSerializer
+from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer, FlashSaleSerializer, TodayDealSerializer, AddressListSerializer, AddAddressSerializer, CartListSerializer, TimeSlotSerializer
 from franchise.utils import haversine
 
 conn = http.client.HTTPSConnection("api.msg91.com")
@@ -490,6 +494,11 @@ def cart(request):
 
     instances = Cart.objects.filter(franchise=franchise, customer=customer)
 
+    items_count = Cart.objects.filter(franchise=franchise, customer=customer).count()
+
+    items_total = instances.aggregate(Sum('cart_amount'))["cart_amount__sum"]
+
+
     context = {
         "request": request
     }
@@ -498,7 +507,11 @@ def cart(request):
 
     response_data = {
         "staus_code": 6000,
-        "data": serializer.data,
+        "data": {
+            "items": serializer.data,
+            "items_count": items_count,
+            "items_total": items_total,
+        },
     }
     return Response(response_data)
 
@@ -706,6 +719,42 @@ def cart_minus(request):
         "staus_code": 6000,
         "data": {
             "message": "Cart updated successfully"
+        },
+    }
+    return Response(response_data)
+
+
+
+@api_view(["GET"])
+@permission_classes ([IsAuthenticated])
+def time_slot(request):
+    user=request.user
+    customer = Customer.objects.get(user=user)
+
+    franchise = customer.current_franchise
+
+    instances = TimeSlot.objects.filter(franchise=franchise)
+
+    today = TimeSlot.objects.filter(franchise=franchise).filter(Q(from_time__gt=datetime.datetime.now()))
+
+    if franchise.instant_delivery == True:
+        instant = True
+    else:
+        instant = False
+
+    context = {
+        "request": request
+    }
+
+    serializer = TimeSlotSerializer(instances, many=True,context=context)
+    today = TimeSlotSerializer(today, many=True,context=context)
+
+    response_data = {
+        "staus_code": 6000,
+        "data": {
+            "instant_delivery": instant,
+            "today": today.data,
+            "tomorrow": serializer.data,
         },
     }
     return Response(response_data)

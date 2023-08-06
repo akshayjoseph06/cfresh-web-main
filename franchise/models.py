@@ -62,4 +62,4 @@ class TimeSlot(models.Model):
 
     def __str__(self):
 
-        return self.franchise
+        return f'{self.franchise}-{self.from_time.strftime("%H:%M %p")}-{self.to_time.strftime("%H:%M %p")}'

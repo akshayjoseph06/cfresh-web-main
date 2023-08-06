@@ -34,5 +34,5 @@ urlpatterns = [
     path('cart/plus/', views.cart_plus),
     path('cart/minus/', views.cart_minus),
 
-    # path('time-slot/', views.time_slot),
+    path('time-slot/', views.time_slot),
 ]

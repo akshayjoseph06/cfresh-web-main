@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.conf import settings
 
 
-from franchise.models import Franchise
+from franchise.models import Franchise, TimeSlot
 from promotions.models import Banner, Poster, StaticBanner, FlashSale, TodayDeal
 from products.models import Category, Item, FranchiseItem, VariantDetail
 from customers.models import Customer, CustomerAddress, Cart
@@ -276,3 +276,21 @@ class CartListSerializer(ModelSerializer):
 
         unit = item.unit
         return unit
+
+
+class TimeSlotSerializer(ModelSerializer):
+
+    from_time = serializers.SerializerMethodField()
+    to_time = serializers.SerializerMethodField()
+
+    class Meta:
+        fields = ("id","from_time","to_time")
+        model = TimeSlot
+
+    def get_from_time(self, obj):
+
+        return obj.from_time.strftime('%I:%M %p')
+
+    def get_to_time(self, obj):
+
+        return obj.to_time.strftime('%I:%M %p')
