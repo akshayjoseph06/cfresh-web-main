@@ -70,7 +70,7 @@ class Cart(models.Model):
     item_type = models.CharField(max_length=50, choices=CART_TYPE)
     cart_amount = models.FloatField()
     quantity = models.IntegerField(default=1)
-
+    is_ordered = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'customer_cart'

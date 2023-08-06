@@ -2,6 +2,7 @@ import random
 import http.client
 import json
 import datetime
+import requests
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -13,6 +14,7 @@ from django.conf import settings
 from django.db.models import Sum
 from django.db.models import Q
 
+from cfresh.settings import MAP_API
 from users.models import User, OTPVerifier
 from customers.models import Customer, CustomerAddress, Cart
 from franchise.models import Franchise, TimeSlot
@@ -22,6 +24,10 @@ from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer
 from franchise.utils import haversine
 
 conn = http.client.HTTPSConnection("api.msg91.com")
+api_key = MAP_API
+url ='https://maps.googleapis.com/maps/api/distancematrix/json?'
+
+
 
 
 @api_view(["POST"])
@@ -758,4 +764,74 @@ def time_slot(request):
         },
     }
     return Response(response_data)
+
+
+
+@api_view(["POST"])
+@permission_classes ([IsAuthenticated])
+def checkout(request):
+    user=request.user
+    customer = Customer.objects.get(user=user)
+
+    franchise = customer.current_franchise
+
+    lat1 = franchise.latitude
+    long1 = franchise.longitude
+    delivery_distance = franchise.delivery_distance
+    base_charge=franchise.base_charge
+    base_distance=franchise.base_distance
+    extra_charge=franchise.extra_charge
+    extra_distance=franchise.extra_distance
+
+    instances = Cart.objects.filter(franchise=franchise, customer=customer)
+
+    items_total = instances.aggregate(Sum('cart_amount'))["cart_amount__sum"]
+
+    address=request.data.get('address')
+
+    address = CustomerAddress.objects.get(id=address)
+
+    lat2 = address.latitude
+    long2 = address.longitude
+
+    distance = haversine(long2, lat2, long1, lat1)
+
+    if distance < delivery_distance:
+        req = requests.get(url + f'origins={lat2}%2C{long2}&destinations={lat1}%2C{long1}&key={api_key}')
+        res = req.json()
+        distance = res['rows'][0]['elements'][0]['distance']['value']
+        distance = round(distance / 1000)
+
+        if distance > base_distance:
+            extra_dist = distance - base_distance
+            extra_charge = (extra_dist/extra_distance) * extra_charge
+            delivery_charge = extra_charge + base_charge
+        else:
+            delivery_charge = base_charge
+
+        response_data = {
+            "staus_code": 6000,
+            "data": {
+                "delivery_charge": delivery_charge,
+                "sub_total": items_total,
+                "total_amount": items_total + delivery_charge,
+            },
+        }
+    else:
+        response_data = {
+            "staus_code": 6000,
+            "data": {
+                "title": "Change Delivery Address",
+                "message": "Item is not deliverable in your area. Please change your address.",
+                "distance": distance,
+            },
+        }
+
+    return Response(response_data)
+
+
+
+
+
+
 
