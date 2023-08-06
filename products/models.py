@@ -61,7 +61,8 @@ class FranchiseItem(models.Model):
     gross_weight = models.CharField(max_length=256)
     is_active = models.BooleanField(default=True)
     delivery_distance=models.FloatField(default=0)
-
+    flash_sale = models.BooleanField(default=False)
+    todays_deal = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'product_franchise_item'

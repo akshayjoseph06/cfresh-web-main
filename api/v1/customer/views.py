@@ -823,7 +823,6 @@ def checkout(request):
             "data": {
                 "title": "Change Delivery Address",
                 "message": "Item is not deliverable in your area. Please change your address.",
-                "distance": distance,
             },
         }
 

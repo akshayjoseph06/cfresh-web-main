@@ -84,8 +84,11 @@ class VarientsSerializer(ModelSerializer):
 
     def get_cart(self, instance):
         request = self.context.get("request")
-        cart = Cart.objects.filter(varient=instance)
-        serializer = ItemCartSerializer(cart, many=True, context={"request": request})
+        if Cart.objects.filter(varient=instance).exists():
+            cart = Cart.objects.get(varient=instance)
+        else:
+            cart= None
+        serializer = ItemCartSerializer(cart, context={"request": request})
         return serializer.data
 
 
@@ -113,8 +116,11 @@ class ProductsSerializer(ModelSerializer):
     
     def get_cart(self, instance):
         request = self.context.get("request")
-        cart = Cart.objects.filter(item=instance)
-        serializer = ItemCartSerializer(cart, many=True,context={"request": request})
+        if Cart.objects.filter(item=instance).exists():
+            cart = Cart.objects.get(item=instance)
+        else:
+            cart= None
+        serializer = ItemCartSerializer(cart, context={"request": request})
         return serializer.data
     
 
@@ -135,8 +141,11 @@ class FlashSaleSerializer(ModelSerializer):
     
     def get_cart(self, instance):
         request = self.context.get("request")
-        cart = Cart.objects.filter(flash_item=instance)
-        serializer = ItemCartSerializer(cart, many=True, context={"request": request})
+        if Cart.objects.filter(flash_item=instance).exists():
+            cart = Cart.objects.get(flash_item=instance)
+        else:
+            cart= None
+        serializer = ItemCartSerializer(cart, context={"request": request})
         return serializer.data
     
 
@@ -157,8 +166,11 @@ class TodayDealSerializer(ModelSerializer):
     
     def get_cart(self, instance):
         request = self.context.get("request")
-        cart = Cart.objects.filter(today_item=instance)
-        serializer = ItemCartSerializer(cart, many=True, context={"request": request})
+        if Cart.objects.filter(today_item=instance).exists():
+            cart = Cart.objects.get(today_item=instance)
+        else:
+            cart= None
+        serializer = ItemCartSerializer(cart, context={"request": request})
         return serializer.data
     
     

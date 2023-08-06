@@ -29,6 +29,14 @@
                                     <form action="" method="post" class="ajax redirect" enctype="multipart/form-data">
                                         <div class="form-row">
                                             <div class="form-group col-12 col-md-6">
+                                                <label>Franchise Name</label>
+                                                <input type="text" disabled class="form-control" value="{{franchise.franchise.name}}">
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Franchise District</label>
+                                                <input type="text" disabled class="form-control" value="{{franchise.franchise.district}}">
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
                                                 <label>Mobile Number</label>
                                                 <input type="text" disabled class="form-control" value="{{franchise.user.phone_number}}">
                                             </div>
@@ -39,6 +47,34 @@
                                             <div class="form-group col-12 col-md-6">
                                                 <label>Email Address</label>
                                                 <input type="text" disabled class="form-control" value="{{franchise.user.email}}">
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Address</label>
+                                                <input type="text" disabled class="form-control" value="{{franchise.franchise.address}}">
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Base Delivery Charge</label>
+                                                <input type="text" disabled class="form-control" value="₹ {{franchise.franchise.base_charge}}">
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Base Delivery Distance</label>
+                                                <input type="text" disabled class="form-control" value="{{franchise.franchise.base_distance}} KM">
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Extra Delivery Charge</label>
+                                                <input type="text" disabled class="form-control" value="₹ {{franchise.franchise.extra_charge}}">
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Extra Delivery Distance</label>
+                                                <input type="text" disabled class="form-control" value="{{franchise.franchise.extra_distance}} KM">
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Free Delivery / Cart Amount</label>
+                                                <input type="text" disabled class="form-control" value="₹ {{franchise.franchise.free_delivery_cart}}">
+                                            </div>
+                                            <div class="form-group col-12 col-md-6">
+                                                <label>Delivery Distance</label>
+                                                <input type="text" disabled class="form-control" value="{{franchise.franchise.delivery_distance}} KM">
                                             </div>
                                         </div>
                                     </form>

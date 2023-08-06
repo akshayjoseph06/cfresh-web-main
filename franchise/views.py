@@ -90,27 +90,281 @@ def account(request):
 @allow_franchise
 def items(request):
     user=request.user
-    franchise= FranchiseUser.objects.get(user=user)
+    franchise_user= FranchiseUser.objects.get(user=user)
+
+    franchise = franchise_user.franchise
+
+    instances = FranchiseItem.objects.filter(franchise=franchise)
     
     context= {
         "title": "C-FRESH | Dashboard",
         "sub_title": "Profile",
         "name": "My Account",
         "franchise":franchise,
+        "instances":instances,
     }
-    return render(request, "franchise/account.html", context=context)
+    return render(request, "franchise/items.html", context=context)
 
 
 @login_required(login_url="/franchise/login")
 @allow_franchise
 def variants(request):
     user=request.user
-    franchise= FranchiseUser.objects.get(user=user)
+    franchise_user= FranchiseUser.objects.get(user=user)
+
+    franchise = franchise_user.franchise
+
+    instances = VariantDetail.objects.filter(franchise=franchise)
     
     context= {
         "title": "C-FRESH | Dashboard",
         "sub_title": "Profile",
         "name": "My Account",
         "franchise":franchise,
+        "instances":instances,
     }
-    return render(request, "franchise/account.html", context=context)
+    return render(request, "franchise/variants.html", context=context)
+
+
+@login_required(login_url="/franchise/login")
+@allow_franchise
+def flashsale(request):
+    user=request.user
+    franchise_user= FranchiseUser.objects.get(user=user)
+
+    franchise = franchise_user.franchise
+
+    instances = FlashSale.objects.filter(franchise=franchise)
+    
+    context= {
+        "title": "C-FRESH | Dashboard",
+        "sub_title": "Profile",
+        "name": "My Account",
+        "franchise":franchise,
+        "instances":instances,
+    }
+    return render(request, "franchise/flashsale.html", context=context)
+
+
+@login_required(login_url="/franchise/login")
+@allow_franchise
+def flashsale_delete(request, id):
+    instance = FlashSale.objects.get(id=id)
+    item= instance.franchise_item
+    item.flash_sale = False
+    item.save()
+    instance.delete()
+    return HttpResponseRedirect(reverse("franchise:flashsale"))
+
+
+@login_required(login_url="/franchise/login")
+@allow_franchise
+def flashsale_add(request, id):
+    user=request.user
+    franchise_user= FranchiseUser.objects.get(user=user)
+
+    franchise = franchise_user.franchise
+
+    item = FranchiseItem.objects.get(id=id)
+
+    if request.method == "POST":
+        price = request.POST.get("price")
+
+        flash_sale = FlashSale.objects.create(
+            franchise=franchise,
+            franchise_item=item,
+            special_price=price,
+        )
+        item.flash_sale = True
+        item.save()
+        flash_sale.save()
+        return HttpResponseRedirect(reverse("franchise:items"))
+    
+    else:
+        context= {
+            "title": "C-FRESH | Dashboard",
+            "sub_title": "Profile",
+            "name": "My Account",
+            "franchise":franchise,
+            "item": item,
+
+        }
+        return render(request, "franchise/flashsale-add.html", context=context)
+
+
+
+
+@login_required(login_url="/franchise/login")
+@allow_franchise
+def todaysdeal(request):
+    user=request.user
+    franchise_user= FranchiseUser.objects.get(user=user)
+
+    franchise = franchise_user.franchise
+
+    instances = TodayDeal.objects.filter(franchise=franchise)
+    
+    context= {
+        "title": "C-FRESH | Dashboard",
+        "sub_title": "Profile",
+        "name": "My Account",
+        "franchise":franchise,
+        "instances":instances,
+    }
+    return render(request, "franchise/todaysdeal.html", context=context)
+
+
+
+@login_required(login_url="/franchise/login")
+@allow_franchise
+def todaysdeal_delete(request, id):
+    instance = TodayDeal.objects.get(id=id)
+    item = instance.franchise_item
+    item.todays_deal = False
+    item.save()
+    instance.delete()
+    return HttpResponseRedirect(reverse("franchise:todaysdeal"))
+
+
+
+@login_required(login_url="/franchise/login")
+@allow_franchise
+def todaysdeal_add(request, id):
+    user=request.user
+    franchise_user= FranchiseUser.objects.get(user=user)
+
+    franchise = franchise_user.franchise
+
+    item = FranchiseItem.objects.get(id=id)
+
+    if request.method == "POST":
+        price = request.POST.get("price")
+
+        todays_deal = TodayDeal.objects.create(
+            franchise=franchise,
+            franchise_item=item,
+            special_price=price,
+        )
+        item.todays_deal = True
+        item.save()
+        todays_deal.save()
+        return HttpResponseRedirect(reverse("franchise:items"))
+    
+    else:
+        context= {
+            "title": "C-FRESH | Dashboard",
+            "sub_title": "Profile",
+            "name": "My Account",
+            "franchise":franchise,
+            "item": item,
+        }
+        return render(request, "franchise/flashsale-add.html", context=context)
+
+
+
+@login_required(login_url="/franchise/login")
+@allow_franchise
+def banners(request):
+    user=request.user
+    franchise_user= FranchiseUser.objects.get(user=user)
+
+    franchise = franchise_user.franchise
+
+    instances = Banner.objects.filter(franchise=franchise)
+    
+    context= {
+        "title": "C-FRESH | Dashboard",
+        "sub_title": "Profile",
+        "name": "My Account",
+        "franchise":franchise,
+        "instances":instances,
+    }
+    return render(request, "franchise/banners.html", context=context)
+
+
+
+@login_required(login_url="/franchise/login")
+@allow_franchise
+def banners_delete(request, id):
+    instance = Banner.objects.get(id=id)
+    instance.delete()
+    return HttpResponseRedirect(reverse("franchise:banners"))
+
+
+
+@login_required(login_url="/franchise/login")
+@allow_franchise
+def banners_add(request, id):
+    pass
+
+
+@login_required(login_url="/franchise/login")
+@allow_franchise
+def posters(request):
+    user=request.user
+    franchise_user= FranchiseUser.objects.get(user=user)
+
+    franchise = franchise_user.franchise
+
+    instances = Poster.objects.filter(franchise=franchise)
+    
+    context= {
+        "title": "C-FRESH | Dashboard",
+        "sub_title": "Profile",
+        "name": "My Account",
+        "franchise":franchise,
+        "instances":instances,
+    }
+    return render(request, "franchise/posters.html", context=context)
+
+
+
+@login_required(login_url="/franchise/login")
+@allow_franchise
+def posters_delete(request, id):
+    instance = Poster.objects.get(id=id)
+    instance.delete()
+    return HttpResponseRedirect(reverse("franchise:posters"))
+
+
+
+@login_required(login_url="/franchise/login")
+@allow_franchise
+def posters_add(request, id):
+    pass
+
+
+@login_required(login_url="/franchise/login")
+@allow_franchise
+def static(request):
+    user=request.user
+    franchise_user= FranchiseUser.objects.get(user=user)
+
+    franchise = franchise_user.franchise
+
+    instances = StaticBanner.objects.filter(franchise=franchise)
+    
+    context= {
+        "title": "C-FRESH | Dashboard",
+        "sub_title": "Profile",
+        "name": "My Account",
+        "franchise":franchise,
+        "instances":instances,
+    }
+    return render(request, "franchise/static.html", context=context)
+
+
+
+@login_required(login_url="/franchise/login")
+@allow_franchise
+def static_delete(request, id):
+    instance = StaticBanner.objects.get(id=id)
+    instance.delete()
+    return HttpResponseRedirect(reverse("franchise:static"))
+
+
+
+@login_required(login_url="/franchise/login")
+@allow_franchise
+def static_add(request, id):
+    pass

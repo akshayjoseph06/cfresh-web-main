@@ -1,0 +1,92 @@
+{% extends "base/admin-base.html" %} {% block container %} {% load static %}
+
+
+{% include 'includes/franchise-nav.html' %}
+
+
+<!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+
+            <div class="row page-titles mx-0 bg-transparent">
+                <div class="col p-md-0">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">{{sub_title}}</a></li>
+                        <li class="breadcrumb-item active"><a href="javascript:void(0)">{{name}}</a></li>
+                    </ol>
+                </div>
+            </div>
+            <!-- row -->
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div style="display: flex;justify-content: space-between; padding: 15px 30px 0;">
+                                    <h4 class="card-title">{{name}}</h4>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered zero-configuration">
+                                        <thead>
+                                            <tr>
+                                                <th>IMAGE</th>
+                                                <th>TITLE</th>
+                                                <th>CATEGORY</th>
+                                                <th>STOCK</th>
+                                                <th>UNIT PRICE</th>
+                                                <th>FLASH SALE</th>
+                                                <th>TODAY'S DEAL</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for instance in instances %}
+                                                <tr>
+                                                    <td>
+                                                        <div style="width: 70px;">
+                                                            <img src="{{instance.item.image.url}}" alt="" style="width: 100%; display: block;">
+                                                        </div>
+                                                    </td>
+                                                    <td>{{instance.item.name}}</td>
+                                                    <td>{{instance.item.category}}</td>
+                                                    <td>{{instance.in_stock}} KG</td>
+                                                    <td>₹ {{instance.per_unit_price}}</td>
+                                                    <td>
+                                                        {% if instance.flash_sale %}
+                                                            <a href="#" class="btn mb-1 btn-warning color-white">
+                                                                ADDED
+                                                            </a>
+                                                        {% else %}
+                                                            <a href="{% url 'franchise:flashsale_add' id=instance.id %}" class="btn mb-1 btn-primary color-white">
+                                                                ADD
+                                                            </a>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if instance.todays_deal %}
+                                                            <a href="#" class="btn mb-1 btn-warning color-white">
+                                                                ADDED
+                                                            </a>
+                                                        {% else %}
+                                                            <a href="{% url 'franchise:todaysdeal_add' id=instance.id %}" class="btn mb-1 btn-primary color-white">
+                                                                ADD
+                                                            </a>
+                                                        {% endif %}
+                                                    </td>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #/ container -->
+        </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+
+{% endblock %}

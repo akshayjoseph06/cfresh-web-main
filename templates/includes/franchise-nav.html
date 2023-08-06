@@ -91,8 +91,8 @@
                             <i class="icon-globe-alt menu-icon"></i><span class="nav-text">Items</span>
                         </a>
                         <ul aria-expanded="false">
-                            <li><a href="#">Items</a></li>
-                            <li><a href="#">Variants</a></li>
+                            <li><a href="{% url 'franchise:items' %}">Items</a></li>
+                            <li><a href="{% url 'franchise:variants' %}">Variants</a></li>
                         </ul>
                     </li>
                     <li>
@@ -105,9 +105,9 @@
                             <i class="icon-heart menu-icon"></i><span class="nav-text">Promotions</span>
                         </a>
                         <ul aria-expanded="false">
-                            <li><a href="#">Banners</a></li>
-                            <li><a href="#">Posters</a></li>
-                            <li><a href="#">Static Banners</a></li>
+                            <li><a href="{% url 'franchise:banners' %}">Banners</a></li>
+                            <li><a href="{% url 'franchise:posters' %}">Posters</a></li>
+                            <li><a href="{% url 'franchise:static' %}">Static Banners</a></li>
                             <li><a href="#">Notifications</a></li>
                         </ul>
                     </li>
@@ -116,8 +116,8 @@
                             <i class="icon-tag menu-icon menu-icon"></i><span class="nav-text">Special Sales</span>
                         </a>
                         <ul aria-expanded="false">
-                            <li><a href="#">Today's Deals</a></li>
-                            <li><a href="#">Flash Sales</a></li>
+                            <li><a href="{% url 'franchise:todaysdeal' %}">Today's Deals</a></li>
+                            <li><a href="{% url 'franchise:flashsale' %}">Flash Sales</a></li>
                         </ul>
                     </li>
                     <li class="mega-menu mega-menu-sm">
