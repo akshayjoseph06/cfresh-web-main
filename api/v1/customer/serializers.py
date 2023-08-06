@@ -44,19 +44,59 @@ class ItemSerializer(ModelSerializer):
         fields = ("id","name","image","description")
         model = Item
 
-class VarientsSerializer(ModelSerializer):
+class ItemCartSerializer(ModelSerializer):
+
+    cart_qty = serializers.SerializerMethodField()
     class Meta:
-        fields = ("id","name","image","per_unit_price")
+        fields = ("id","cart_qty")
+        model = Cart
+    
+    def get_cart_qty(self, instance):
+        request = self.context.get("request")
+        cart_qty=0
+        if instance.item is not None:
+            item = instance.item
+            qty=item.unit_quantity
+            cart_qty=instance.quantity * qty
+        elif instance.today_item is not None:
+            item = instance.today_item.franchise_item
+            qty=item.unit_quantity
+            cart_qty=instance.quantity * qty
+        elif instance.flash_item is not None:
+            item = instance.flash_item.franchise_item
+            qty=item.unit_quantity
+            cart_qty=instance.quantity * qty
+        else:
+            variant = instance.varient
+            item = variant.item
+            qty=item.unit_quantity
+            cart_qty=instance.quantity * qty
+
+        return cart_qty
+
+class VarientsSerializer(ModelSerializer):
+
+    cart = serializers.SerializerMethodField()
+
+    class Meta:
+        fields = ("id","name","image","per_unit_price","cart")
         model = VariantDetail
+
+    def get_cart(self, instance):
+        request = self.context.get("request")
+        cart = Cart.objects.filter(varient=instance)
+        serializer = ItemCartSerializer(cart, many=True, context={"request": request})
+        return serializer.data
 
 
 class ProductsSerializer(ModelSerializer):
 
     item = serializers.SerializerMethodField()
     varients = serializers.SerializerMethodField()
+    cart = serializers.SerializerMethodField()
 
     class Meta:
-        fields = ("id","item","unit","unit_quantity","per_unit_price","net_weight","gross_weight","varients")
+        fields = ("id","item","unit","unit_quantity","per_unit_price","net_weight","gross_weight","varients","cart")
         model = FranchiseItem
 
     def get_item(self, instance):
@@ -71,13 +111,20 @@ class ProductsSerializer(ModelSerializer):
         serializer = VarientsSerializer(varients, many=True, context={"request": request})
         return serializer.data
     
+    def get_cart(self, instance):
+        request = self.context.get("request")
+        cart = Cart.objects.filter(item=instance)
+        serializer = ItemCartSerializer(cart, many=True,context={"request": request})
+        return serializer.data
+    
 
 class FlashSaleSerializer(ModelSerializer):
 
     franchise_item = serializers.SerializerMethodField()
+    cart = serializers.SerializerMethodField()
 
     class Meta:
-        fields = ("id","franchise_item","special_price")
+        fields = ("id","franchise_item","special_price", "cart")
         model = FlashSale
 
     def get_franchise_item(self, instance):
@@ -86,13 +133,20 @@ class FlashSaleSerializer(ModelSerializer):
         serializer = ProductsSerializer(item, context={"request": request})
         return serializer.data
     
+    def get_cart(self, instance):
+        request = self.context.get("request")
+        cart = Cart.objects.filter(flash_item=instance)
+        serializer = ItemCartSerializer(cart, many=True, context={"request": request})
+        return serializer.data
+    
 
 class TodayDealSerializer(ModelSerializer):
 
     franchise_item = serializers.SerializerMethodField()
+    cart = serializers.SerializerMethodField()
 
     class Meta:
-        fields = ("id","franchise_item","special_price")
+        fields = ("id","franchise_item","special_price", "cart")
         model = TodayDeal
 
     def get_franchise_item(self, instance):
@@ -100,6 +154,13 @@ class TodayDealSerializer(ModelSerializer):
         item = instance.franchise_item
         serializer = ProductsSerializer(item, context={"request": request})
         return serializer.data
+    
+    def get_cart(self, instance):
+        request = self.context.get("request")
+        cart = Cart.objects.filter(today_item=instance)
+        serializer = ItemCartSerializer(cart, many=True, context={"request": request})
+        return serializer.data
+    
     
 
 
