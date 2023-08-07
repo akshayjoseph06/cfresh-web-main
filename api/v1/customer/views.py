@@ -819,7 +819,7 @@ def checkout(request):
         }
     else:
         response_data = {
-            "staus_code": 6000,
+            "staus_code": 6001,
             "data": {
                 "title": "Change Delivery Address",
                 "message": "Item is not deliverable in your area. Please change your address.",

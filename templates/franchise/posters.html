@@ -26,6 +26,10 @@
                             <div class="card-body">
                                 <div style="display: flex;justify-content: space-between; padding: 15px 30px 0;">
                                     <h4 class="card-title">{{name}}</h4>
+                                    <div style="display: flex;justify-content: flex-end; align-items: center;">
+                                        <a href="{% url 'franchise:posters_add' type='PR' %}" class="btn mb-1 btn-primary btn-rounded color-white mr-2">ADD FOR PRODUCT</a>
+                                        <a href="{% url 'franchise:posters_add' type='CA' %}" class="btn mb-1 btn-primary btn-rounded color-white">ADD FOR CATEGORY</a>
+                                    </div>
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-striped table-bordered zero-configuration">

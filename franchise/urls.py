@@ -24,14 +24,14 @@ urlpatterns = [
 
     path('banners/', views.banners, name="banners"),
     path('banners/delete/<int:id>/', views.banners_delete, name="banners_delete"),
-    path('banners/add/<int:id>/', views.banners_add, name="banners_add"),
+    path('banners/add/<str:type>/', views.banners_add, name="banners_add"),
 
     path('posters/', views.posters, name="posters"),
     path('posters/delete/<int:id>/', views.posters_delete, name="posters_delete"),
-    path('posters/add/<int:id>/', views.posters_add, name="posters_add"),
+    path('posters/add/<str:type>/', views.posters_add, name="posters_add"),
 
     path('static/', views.static, name="static"),
     path('static/delete/<int:id>/', views.static_delete, name="static_delete"),
-    path('static/add/<int:id>/', views.static_add, name="static_add"),
+    path('static/add/<str:type>/', views.static_add, name="static_add"),
 
 ]

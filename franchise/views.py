@@ -294,8 +294,56 @@ def banners_delete(request, id):
 
 @login_required(login_url="/franchise/login")
 @allow_franchise
-def banners_add(request, id):
-    pass
+def banners_add(request, type):
+    user=request.user
+    franchise_user= FranchiseUser.objects.get(user=user)
+
+    franchise = franchise_user.franchise
+
+    if type == "PR":
+        instances = FranchiseItem.objects.filter(franchise=franchise)
+        product = True
+        category = False
+    elif type == "CA":
+        instances = Category.objects.all()
+        product = False
+        category = True
+
+
+    if request.method == "POST":
+        model_id = request.POST.get("item")
+        name = request.POST.get("name")
+        banner = request.FILES.get("image")
+        if type == "PR":
+            banner = Banner.objects.create(
+                franchise = franchise,
+                name = name,
+                model_id = model_id,
+                banner_image =banner,
+                banner_type= "PR",
+            )
+            return HttpResponseRedirect(reverse("franchise:banners"))
+        elif type == "CA":
+            banner = Banner.objects.create(
+                franchise = franchise,
+                name = name,
+                model_id = model_id,
+                banner_image =banner,
+                banner_type= "CA",
+            )
+            return HttpResponseRedirect(reverse("franchise:banners"))
+    else:
+        context= {
+            "title": "C-FRESH | Dashboard",
+            "sub_title": "Profile",
+            "name": "My Account",
+            "franchise":franchise,
+            "instances":instances,
+            "product":product,
+            "category":category,
+        }
+        return render(request, "franchise/banner-add.html", context=context)
+
 
 
 @login_required(login_url="/franchise/login")
@@ -330,8 +378,55 @@ def posters_delete(request, id):
 
 @login_required(login_url="/franchise/login")
 @allow_franchise
-def posters_add(request, id):
-    pass
+def posters_add(request, type):
+    user=request.user
+    franchise_user= FranchiseUser.objects.get(user=user)
+
+    franchise = franchise_user.franchise
+
+    if type == "PR":
+        instances = FranchiseItem.objects.filter(franchise=franchise)
+        product = True
+        category = False
+    elif type == "CA":
+        instances = Category.objects.all()
+        product = False
+        category = True
+
+
+    if request.method == "POST":
+        model_id = request.POST.get("item")
+        name = request.POST.get("name")
+        poster = request.FILES.get("image")
+        if type == "PR":
+            poster = Poster.objects.create(
+                franchise = franchise,
+                name = name,
+                model_id = model_id,
+                poster_image =poster,
+                poster_type= "PR",
+            )
+            return HttpResponseRedirect(reverse("franchise:posters"))
+        elif type == "CA":
+            poster = Poster.objects.create(
+                franchise = franchise,
+                name = name,
+                model_id = model_id,
+                poster_image =poster,
+                poster_type= "CA",
+            )
+            return HttpResponseRedirect(reverse("franchise:posters"))
+    else:
+        context= {
+            "title": "C-FRESH | Dashboard",
+            "sub_title": "Profile",
+            "name": "My Account",
+            "franchise":franchise,
+            "instances":instances,
+            "product":product,
+            "category":category,
+        }
+        return render(request, "franchise/posters-add.html", context=context)
 
 
 @login_required(login_url="/franchise/login")
@@ -366,5 +461,52 @@ def static_delete(request, id):
 
 @login_required(login_url="/franchise/login")
 @allow_franchise
-def static_add(request, id):
-    pass
+def static_add(request, type):
+    user=request.user
+    franchise_user= FranchiseUser.objects.get(user=user)
+
+    franchise = franchise_user.franchise
+
+    if type == "PR":
+        instances = FranchiseItem.objects.filter(franchise=franchise)
+        product = True
+        category = False
+    elif type == "CA":
+        instances = Category.objects.all()
+        product = False
+        category = True
+
+
+    if request.method == "POST":
+        model_id = request.POST.get("item")
+        name = request.POST.get("name")
+        static = request.FILES.get("image")
+        if type == "PR":
+            static = StaticBanner.objects.create(
+                franchise = franchise,
+                name = name,
+                model_id = model_id,
+                banner_image =static,
+                banner_type= "PR",
+            )
+            return HttpResponseRedirect(reverse("franchise:static"))
+        elif type == "CA":
+            static = StaticBanner.objects.create(
+                franchise = franchise,
+                name = name,
+                model_id = model_id,
+                banner_image =static,
+                banner_type= "CA",
+            )
+            return HttpResponseRedirect(reverse("franchise:static"))
+    else:
+        context= {
+            "title": "C-FRESH | Dashboard",
+            "sub_title": "Profile",
+            "name": "My Account",
+            "franchise":franchise,
+            "instances":instances,
+            "product":product,
+            "category":category,
+        }
+        return render(request, "franchise/static-add.html", context=context)
