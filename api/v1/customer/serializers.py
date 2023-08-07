@@ -193,9 +193,21 @@ class AddAddressSerializer(ModelSerializer):
 
 class AddressListSerializer(ModelSerializer):
 
+    primary = serializers.SerializerMethodField()
+
     class Meta:
-        fields = ("id","name","phone_number","address_type", "address", "street", "land_mark",)
+        fields = ("id","name","phone_number","address_type", "address", "street", "land_mark","primary")
         model = CustomerAddress
+
+    def get_primary(self, instance):
+        request = self.context.get("request")
+        user=request.user
+        customer = Customer.objects.get(user=user)
+        if customer.current_address == instance:
+            primary = True
+        else:
+            primary = False
+        return primary
 
 
 

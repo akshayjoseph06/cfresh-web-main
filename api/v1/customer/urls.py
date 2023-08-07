@@ -28,6 +28,7 @@ urlpatterns = [
     path('address/add/', views.address_add),
     # path('address/edit/<int:id>/', views.address_edit),
     path('address/delete/<int:id>/', views.address_delete),
+    path('address/primary/<int:id>/', views.address_primary),
 
     path('cart/', views.cart),
     path('cart/add/', views.cart_add),

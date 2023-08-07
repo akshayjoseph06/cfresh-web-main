@@ -428,13 +428,11 @@ def address(request):
         "request": request
     }
     serializer = AddressListSerializer(instances, many=True,context=context)
-    current = AddressListSerializer(current_address, context=context)
 
     response_data = {
         "staus_code": 6000,
         "data": {
             "address": serializer.data,
-            "current":current.data,
         }
     }
     return Response(response_data)
@@ -476,17 +474,58 @@ def address_add(request):
 @permission_classes ([IsAuthenticated])
 def address_delete(request, id):
 
+    user=request.user
+    customer = Customer.objects.get(user=user)
+
+    address_count = customer.address.count()
     instance = CustomerAddress.objects.get(id=id)
 
-    instance.delete()
+    if address_count == 1:
+        instance.delete()
+    elif address_count == 2:
+        instance.delete()
+        address = customer.address
+        customer.current_address = address
+        customer.save()
+    else:
+        if customer.current_address == instance:
+            instance.delete()
+            address = customer.address[0]
+            customer.current_address = address
+            customer.save()
+        else:
+            instance.delete()
 
     response_data = {
-        "staus_code": 6001,
-        "data": [],
+        "staus_code": 6000,
+        "data": {},
         "status":"Address Deleted"
     }
 
     return Response(response_data)
+
+
+@api_view(["POST"])
+@permission_classes ([IsAuthenticated])
+def address_primary(request, id):
+
+    user=request.user
+    customer = Customer.objects.get(user=user)
+
+    instance = CustomerAddress.objects.get(id=id)
+
+    customer.current_address = instance
+
+    customer.save()
+
+    response_data = {
+        "staus_code": 6000,
+        "data": {},
+        "status":"Current Address Changed"
+    }
+
+    return Response(response_data)
+
 
 
 @api_view(["GET"])
@@ -604,29 +643,23 @@ def cart_add(request):
 
             response_data = {
                 "staus_code": 6000,
-                "data": {
-                    "message": "Successfully added to cart",
-                    "distance": distance,
-                },
+                "data": {},
+                "message": "Successfully added to cart",
+
             }
 
         else:
             response_data = {
                 "staus_code": 6001,
-                "data": {
-                    "title": "Change Delivery Address",
-                    "message": "Item is not deliverable in your area. Please change your address.",
-                    "distance": distance,
-                },
+                "data": {},
+                "message": "Item is not deliverable in your area. Please change your address.",
+
             }
     else:
         response_data = {
             "staus_code": 6002,
-            "data": {
-                "address": {},
-                "title": "Add Delivery Address",
-                "message": "Delvery address not found. Please add a delivery address."
-            },
+            "data": {},
+            "message": "Delvery address not found. Please add a delivery address."
         }
 
     return Response(response_data)
