@@ -578,7 +578,7 @@ def cart_add(request):
                 cart = Cart.objects.create(
                     customer=customer,
                     franchise=franchise,
-                    varient=item,
+                    varient=variant,
                     item_type=item_type,
                     cart_amount=cart_amount,
                     quantity=1,
@@ -587,7 +587,7 @@ def cart_add(request):
                 cart = Cart.objects.create(
                     customer=customer,
                     franchise=franchise,
-                    today_item=item,
+                    today_item=todays_deal,
                     item_type=item_type,
                     cart_amount=cart_amount,
                     quantity=1,
@@ -596,7 +596,7 @@ def cart_add(request):
                 cart = Cart.objects.create(
                     customer=customer,
                     franchise=franchise,
-                    flash_item=item,
+                    flash_item=flash_sale,
                     item_type=item_type,
                     cart_amount=cart_amount,
                     quantity=1,
@@ -612,7 +612,7 @@ def cart_add(request):
 
         else:
             response_data = {
-                "staus_code": 6000,
+                "staus_code": 6001,
                 "data": {
                     "title": "Change Delivery Address",
                     "message": "Item is not deliverable in your area. Please change your address.",
@@ -621,7 +621,7 @@ def cart_add(request):
             }
     else:
         response_data = {
-            "staus_code": 6000,
+            "staus_code": 6002,
             "data": {
                 "address": {},
                 "title": "Add Delivery Address",
