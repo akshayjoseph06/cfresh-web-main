@@ -402,6 +402,8 @@ def products(request,id):
     category = Category.objects.get(id=id)
     instances = FranchiseItem.objects.filter(item__category=category)
 
+    cat_id = category.id
+
     context = {
         "request": request
     }
@@ -409,6 +411,7 @@ def products(request,id):
 
     response_data = {
         "staus_code": 6000,
+        "category_id": cat_id,
         "data": serializer.data,
     }
     return Response(response_data)

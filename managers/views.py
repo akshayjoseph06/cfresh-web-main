@@ -871,3 +871,37 @@ def franchise_users(request):
         "instances":instances,
     }
     return render(request, "manager/f-users.html", context=context)
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def franchise_users_add(request):
+    if request.method == "POST":
+        form = UserForm(request.POST,request.FILES)
+        if form.is_valid():
+            instance= form.save(commit=False)
+            instance.save()
+
+            return HttpResponseRedirect(reverse("managers:products"))
+        else:
+            message = generate_form_errors(form)
+            form = ItemForm()
+            context= {
+                "title": "Manager Dashboard | Add Item",
+                "sub_title": "Products",
+                "name": "Add Item",
+                "error": True,
+                "message": message,
+                "form": form,
+            }
+            return render(request, "manager/products-add.html", context=context)
+
+    else:
+        form = ItemForm()
+        context= {
+            "title": "Manager Dashboard | Add Item",
+            "sub_title": "Products",
+            "name": "Add Item",
+            "form": form,
+        }
+        return render(request, "manager/products-add.html", context=context)
