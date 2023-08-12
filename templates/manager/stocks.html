@@ -35,9 +35,6 @@
                                                 <th>TITLE</th>
                                                 <th>CATEGORY</th>
                                                 <th>STOCK</th>
-                                                <th>SOLD OUT</th>
-                                                <th>NET WEIGHT</th>
-                                                <th>GROSS WEIGHT</th>
                                                 <th>EDIT</th>
                                             </tr>
                                         </thead>
@@ -52,9 +49,6 @@
                                                     <td>{{instance.item.name}}</td>
                                                     <td>{{instance.item.category}}</td>
                                                     <td>{{instance.in_stock}} {{instance.unit}}</td>
-                                                    <td>{{instance.sold}} {{instance.unit}}</td>
-                                                    <td>{{instance.net_weight}}</td>
-                                                    <td>{{instance.gross_weight}}</td>
                                                     <td>
                                                         <a href="{% url 'managers:stocks_edit' id=instance.id %}" class="btn mb-1 btn-primary color-white">
                                                             <i class="icon-pencil menu-icon" style="color:white; font-size: 14px; margin-right: 2px;"></i>

@@ -20,6 +20,7 @@ from customers.models import Customer, CustomerAddress, Cart
 from franchise.models import Franchise, TimeSlot
 from promotions.models import Banner, StaticBanner, Poster, FlashSale, TodayDeal
 from products.models import Category, FranchiseItem, VariantDetail
+from managers.models import CompanyContact
 from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer, FlashSaleSerializer, TodayDealSerializer, AddressListSerializer, AddAddressSerializer, CartListSerializer, TimeSlotSerializer
 from franchise.utils import haversine
 
@@ -866,7 +867,41 @@ def checkout(request):
 
 
 
+@api_view(["GET"])
+@permission_classes ([IsAuthenticated])
+def account(request):
+    user=request.user
+    customer = Customer.objects.get(user=user)
 
+    contact = CompanyContact.objects.all()[:1].get()
 
+    response_data = {
+        "staus_code": 6000,
+        "data": {
+            "customer": {
+                "name":customer.user.first_name,
+                "phone_number":customer.user.phone_number,
+                "email":customer.user.email
+                },
+            "contact": {
+                "company":contact.company,
+                "address_line1":contact.address_line1,
+                "address_line2":contact.address_line2,
+                "district":contact.district,
+                "state":contact.district,
+                "pincode":contact.pincode,
+                "phone_number":contact.number,
+                "email":contact.email,
+                },
+            "pages": {
+                "about":contact.about,
+                "privacy":contact.privacy,
+                "terms":contact.terms,
+                "return and refund":contact.refund,
+                },
+        },
+        "message":"Account Details"
+    }
+    return Response(response_data)
 
 
