@@ -327,9 +327,13 @@ class CartListSerializer(ModelSerializer):
         else:
             item = instance.varient
 
-        image = request.build_absolute_uri(item.image)
+        image_relative_url = item.image.url
+    
+        if request:
+            full_image_url = request.build_absolute_uri(image_relative_url)
+            return full_image_url
         
-        return image
+        return image_relative_url
     
 
     def get_cart_qty(self, instance):

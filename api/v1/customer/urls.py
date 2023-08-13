@@ -37,6 +37,7 @@ urlpatterns = [
 
     path('time-slot/', views.time_slot),
     path('checkout/', views.checkout),
+    path('address/select/', views.address_select),
 
     path('account/', views.account),
 

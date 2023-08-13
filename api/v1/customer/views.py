@@ -806,6 +806,46 @@ def time_slot(request):
 
 @api_view(["POST"])
 @permission_classes ([IsAuthenticated])
+def address_select(request):
+    user=request.user
+    customer = Customer.objects.get(user=user)
+
+    franchise = customer.current_franchise
+
+    lat1 = franchise.latitude
+    long1 = franchise.longitude
+    delivery_distance = franchise.delivery_distance
+
+    address=request.data.get('address')
+
+    address = CustomerAddress.objects.get(id=address)
+
+    lat2 = address.latitude
+    long2 = address.longitude
+
+    distance = haversine(long2, lat2, long1, lat1)
+
+    if distance < delivery_distance:
+        response_data = {
+            "staus_code": 6000,
+            "data": {
+                "message": "Item is deliverable.",
+            },
+        }
+    else:
+        response_data = {
+            "staus_code": 6001,
+            "data": {
+                "title": "Change Delivery Address",
+                "message": "Item is not deliverable in your area. Please change your address.",
+            },
+        }
+
+    return Response(response_data)
+
+
+@api_view(["POST"])
+@permission_classes ([IsAuthenticated])
 def checkout(request):
     user=request.user
     customer = Customer.objects.get(user=user)
