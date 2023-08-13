@@ -23,6 +23,7 @@ from products.models import Category, FranchiseItem, VariantDetail
 from managers.models import CompanyContact
 from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer, FlashSaleSerializer, TodayDealSerializer, AddressListSerializer, AddAddressSerializer, CartListSerializer, TimeSlotSerializer
 from franchise.utils import haversine
+from orders.models import Order
 
 conn = http.client.HTTPSConnection("api.msg91.com")
 api_key = MAP_API
@@ -541,9 +542,9 @@ def cart(request):
 
     franchise = customer.current_franchise
 
-    instances = Cart.objects.filter(franchise=franchise, customer=customer)
+    instances = Cart.objects.filter(franchise=franchise, customer=customer, is_ordered=False)
 
-    items_count = Cart.objects.filter(franchise=franchise, customer=customer).count()
+    items_count = Cart.objects.filter(franchise=franchise, customer=customer, is_ordered=False).count()
 
     items_total = instances.aggregate(Sum('cart_amount'))["cart_amount__sum"]
 
@@ -886,7 +887,7 @@ def checkout(request):
     extra_charge=franchise.extra_charge
     extra_distance=franchise.extra_distance
 
-    instances = Cart.objects.filter(franchise=franchise, customer=customer)
+    instances = Cart.objects.filter(franchise=franchise, customer=customer, is_ordered=False)
 
     items_total = instances.aggregate(Sum('cart_amount'))["cart_amount__sum"]
     
@@ -987,3 +988,73 @@ def account(request):
     return Response(response_data)
 
 
+
+
+@api_view(["POST"])
+@permission_classes ([IsAuthenticated])
+def place_order(request):
+    user=request.user
+    customer = Customer.objects.get(user=user)
+
+    franchise = customer.current_franchise
+
+    wallet = customer.wallet_amount
+
+    address = customer.current_address
+
+    delivery_type = request.data.get('delivery_type')
+    delivery_day = request.data.get('delivery_day')
+    time_slot = request.data.get('time_slot')
+    delivery_charge = request.data.get('delivery_charge')
+    final_price = request.data.get('final_price')
+    payment_method = request.data.get('payment_method')
+
+    previous = Order.objects.all().first()
+    time_slot = TimeSlot.objects.get(id=time_slot)
+
+    if previous is not None:
+        id = previous.id
+        order_id = f'ORD00{id+1}'       
+    else:
+        order_id = "ORD001"
+
+    if payment_method == "COD":
+        cart_items = Cart.objects.filter(franchise=franchise, customer=customer, is_ordered=False)
+        order = Order.objects.create(
+            order_id=order_id,
+            customer=customer,
+            franchise=franchise,
+            address=address,
+            payment_method=payment_method,
+            payment_status="TD",
+            order_status="PL",
+            actual_price=final_price,
+            final_price=final_price,
+            time_slot=time_slot,
+            delivery_type=delivery_type,
+            delivery_day=delivery_day,
+            delivery_charge=delivery_charge,
+        )
+
+        for item in cart_items:
+            order.cart_items.add(item)
+            item.is_ordered = True
+            item.save()
+
+        response_data = {
+            "staus_code": 6000,
+            "data": {
+                "message": "Order Placed",
+            },
+        }
+
+    else:
+        response_data = {
+            "staus_code": 6000,
+            "data": {
+                "message": "Order Not Placed",
+            },
+        }
+
+    return Response(response_data)
+    

@@ -49,6 +49,7 @@ class Order(models.Model):
     franchise = models.ForeignKey(Franchise, on_delete=models.SET_NULL, null=True, blank=True)
     cart_items = models.ManyToManyField(Cart)
     address = models.ForeignKey(CustomerAddress, on_delete=models.SET_NULL, null=True, blank=True)
+    payment_method = models.CharField(max_length=3, choices=PAYMENT_METHOD_CHOICES, null=True, blank=True)
     payment_status = models.CharField(max_length=2, choices=PAYMENT_STATUS)
     order_status = models.CharField(max_length=2, choices=ORDER_STATUS)
     delivery_agent = models.ForeignKey(DeliveryAgent, on_delete=models.SET_NULL, null=True, blank=True)
@@ -61,3 +62,14 @@ class Order(models.Model):
     delivery_type = models.CharField(choices=DELIVERY_TYPE, max_length=2)
     delivery_day = models.CharField(choices=DELIVERY_DAY_CHOICES, max_length=2, null=True, blank=True)
     delivery_charge = models.IntegerField(default=0)
+
+
+    class Meta:
+        db_table = 'orders_order'
+        verbose_name = 'order'
+        verbose_name_plural = 'orders'
+        ordering = ('-id',)
+
+    def __str__(self):
+
+        return self.order_id

@@ -41,5 +41,8 @@ urlpatterns = [
 
     path('account/', views.account),
 
+   # path('orders/', views.orders),
+    path('order/place/', views.place_order),
+
 
 ]
