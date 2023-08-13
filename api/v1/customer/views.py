@@ -852,6 +852,32 @@ def checkout(request):
 
     franchise = customer.current_franchise
 
+    wallet = customer.wallet_amount
+
+    address = customer.current_address
+
+    delivery_type = request.data.get('delivery_type')
+    delivery_day = request.data.get('delivery_day')
+    time_slot = request.data.get('time_slot')
+
+    context = {
+        "request": request
+    }
+
+    address_data = AddressListSerializer(address, context=context)
+
+
+    if delivery_type == "IN":
+        time_slot = "Instant Delivery"
+        delivery_day= "Today"
+    else:
+        time_slot_data = TimeSlot.objects.get(id=time_slot)
+        time_slot = TimeSlotSerializer(time_slot_data, context=context)
+        if delivery_day == "TD":
+            delivery_day= "Today"
+        else:
+            delivery_day= "Tomorrow"
+
     lat1 = franchise.latitude
     long1 = franchise.longitude
     delivery_distance = franchise.delivery_distance
@@ -863,10 +889,7 @@ def checkout(request):
     instances = Cart.objects.filter(franchise=franchise, customer=customer)
 
     items_total = instances.aggregate(Sum('cart_amount'))["cart_amount__sum"]
-
-    address=request.data.get('address')
-
-    address = CustomerAddress.objects.get(id=address)
+    
 
     lat2 = address.latitude
     long2 = address.longitude
@@ -886,14 +909,33 @@ def checkout(request):
         else:
             delivery_charge = base_charge
 
-        response_data = {
-            "staus_code": 6000,
-            "data": {
-                "delivery_charge": delivery_charge,
-                "sub_total": items_total,
-                "total_amount": items_total + delivery_charge,
-            },
-        }
+        
+        if delivery_type == "IN":
+            response_data = {
+                "staus_code": 6000,
+                "data": {
+                    "delivery_charge": delivery_charge,
+                    "sub_total": items_total,
+                    "total_amount": items_total + delivery_charge,
+                    "time_slot": time_slot,
+                    "delivery_day": delivery_day,
+                    "wallet": wallet,
+                    "address": address_data.data,
+                },
+            }
+        else:
+            response_data = {
+                "staus_code": 6000,
+                "data": {
+                    "delivery_charge": delivery_charge,
+                    "sub_total": items_total,
+                    "total_amount": items_total + delivery_charge,
+                    "time_slot": time_slot.data,
+                    "delivery_day": delivery_day,
+                    "wallet": wallet,
+                    "address": address_data.data,
+                },
+            }
     else:
         response_data = {
             "staus_code": 6001,
