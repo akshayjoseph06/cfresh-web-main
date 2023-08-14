@@ -401,8 +401,11 @@ def todays_deal(request):
 @api_view(["GET"])
 @permission_classes ([IsAuthenticated])
 def products(request,id):
+    user=request.user
+    customer = Customer.objects.get(user=user)
+    franchise= customer.current_franchise
     category = Category.objects.get(id=id)
-    instances = FranchiseItem.objects.filter(item__category=category)
+    instances = FranchiseItem.objects.filter(item__category=category,franchise=franchise)
 
     cat_id = category.id
 
@@ -1061,11 +1064,32 @@ def place_order(request):
 
         }
 
-    else:
+    elif payment_method == "PTM":
+        cart_items = Cart.objects.filter(franchise=franchise, customer=customer, is_ordered=False)
+        order = Order.objects.create(
+            order_id=order_id,
+            customer=customer,
+            franchise=franchise,
+            address=address,
+            payment_method=payment_method,
+            payment_status="TD",
+            order_status="PL",
+            actual_price=final_price,
+            final_price=final_price,
+            time_slot=time_slot,
+            delivery_type=delivery_type,
+            delivery_day=delivery_day,
+            delivery_charge=delivery_charge,
+        )
+
+        for item in cart_items:
+            order.cart_items.add(item)
+            item.is_ordered = True
+            item.save()
         response_data = {
             "staus_code": 6000,
             "data": {},
-            "message": "Order Not Placed",
+            "message": "Order Initiated",
         }
 
     return Response(response_data)
@@ -1091,3 +1115,10 @@ def orders(request):
         "data":  serializer.data,
     }
     return Response(response_data)
+
+
+@api_view(["POST"])
+@permission_classes ([IsAuthenticated])
+def handle_payment(request):
+    user=request.user
+    customer = Customer.objects.get(user=user)

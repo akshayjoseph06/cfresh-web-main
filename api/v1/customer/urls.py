@@ -43,6 +43,7 @@ urlpatterns = [
 
     path('orders/', views.orders),
     path('order/place/', views.place_order),
+    path('order/payment/', views.handle_payment),
 
 
 ]
