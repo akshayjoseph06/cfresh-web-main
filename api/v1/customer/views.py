@@ -1088,8 +1088,6 @@ def orders(request):
 
     response_data = {
         "staus_code": 6000,
-        "data": {
-            "address": serializer.data,
-        }
+        "data":  serializer.data,
     }
     return Response(response_data)

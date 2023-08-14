@@ -463,9 +463,12 @@ class OrderSerializer(ModelSerializer):
     franchise = serializers.SerializerMethodField()
     district = serializers.SerializerMethodField()
     cart_items = serializers.SerializerMethodField()
+    address = serializers.SerializerMethodField()
+    created_datetime = serializers.SerializerMethodField()
+
 
     class Meta:
-        fields = ("id","order_id","franchise","district","cart_items","address","actual_price","offer_price","delivery_charge","final_price")
+        fields = ("id","created_datetime","order_id","franchise","district","cart_items","address","actual_price","offer_price","delivery_charge","final_price")
         model = Order
 
     
@@ -484,3 +487,13 @@ class OrderSerializer(ModelSerializer):
         instances = instance.cart_items
         serializer = CartOrderSerializer(instances, many=True, context={"request": request})
         return serializer.data
+    
+    def get_address(self, instance):
+        request = self.context.get("request")
+        instance = instance.address
+        serializer = AddressListSerializer(instance, context={"request": request})
+        return serializer.data
+    
+    def get_created_datetime(self, obj):
+
+        return obj.created_datetime.strftime('%d-%m-%Y %I:%M %p')
