@@ -21,7 +21,7 @@ from franchise.models import Franchise, TimeSlot
 from promotions.models import Banner, StaticBanner, Poster, FlashSale, TodayDeal
 from products.models import Category, FranchiseItem, VariantDetail
 from managers.models import CompanyContact
-from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer, FlashSaleSerializer, TodayDealSerializer, AddressListSerializer, AddAddressSerializer, CartListSerializer, TimeSlotSerializer
+from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer, FlashSaleSerializer, TodayDealSerializer, AddressListSerializer, AddAddressSerializer, CartListSerializer, TimeSlotSerializer, OrderSerializer
 from franchise.utils import haversine
 from orders.models import Order
 
@@ -918,7 +918,8 @@ def checkout(request):
                     "delivery_charge": delivery_charge,
                     "sub_total": items_total,
                     "total_amount": items_total + delivery_charge,
-                    "time_slot": time_slot,
+                    "instant_delivery":True,
+                    "time_slot": {},
                     "delivery_day": delivery_day,
                     "wallet": wallet,
                     "address": address_data.data,
@@ -931,6 +932,7 @@ def checkout(request):
                     "delivery_charge": delivery_charge,
                     "sub_total": items_total,
                     "total_amount": items_total + delivery_charge,
+                    "instant_delivery":False,
                     "time_slot": time_slot.data,
                     "delivery_day": delivery_day,
                     "wallet": wallet,
@@ -1010,13 +1012,18 @@ def place_order(request):
     payment_method = request.data.get('payment_method')
 
     previous = Order.objects.all().first()
-    time_slot = TimeSlot.objects.get(id=time_slot)
+
+    if delivery_type == "IN":
+        time_slot = None
+        delivery_day= "TD"
+    else:
+        time_slot = TimeSlot.objects.get(id=time_slot)
 
     if previous is not None:
         id = previous.id
-        order_id = f'ORD00{id+1}'       
+        order_id = f'ORD000{id+1}'       
     else:
-        order_id = "ORD001"
+        order_id = "ORD0001"
 
     if payment_method == "COD":
         cart_items = Cart.objects.filter(franchise=franchise, customer=customer, is_ordered=False)
@@ -1058,3 +1065,26 @@ def place_order(request):
 
     return Response(response_data)
     
+
+
+@api_view(["GET"])
+@permission_classes ([IsAuthenticated])
+def orders(request):
+    user=request.user
+    customer = Customer.objects.get(user=user)
+    
+    instances = Order.objects.filter(customer=customer)
+    
+
+    context = {
+        "request": request
+    }
+    serializer = OrderSerializer(instances, many=True,context=context)
+
+    response_data = {
+        "staus_code": 6000,
+        "data": {
+            "address": serializer.data,
+        }
+    }
+    return Response(response_data)

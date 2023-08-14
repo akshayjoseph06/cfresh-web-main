@@ -33,7 +33,7 @@ CANCELLED_BY_CHOICES = (
 
 PAYMENT_METHOD_CHOICES = (
     ("COD", "Cash on Delivery"),
-    ("RZP", "Razorpay"),
+    ("PTM", "Paytm"),
     ("WLT", "Wallet")
 )
 

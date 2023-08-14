@@ -7,6 +7,7 @@ from franchise.models import Franchise, TimeSlot
 from promotions.models import Banner, Poster, StaticBanner, FlashSale, TodayDeal
 from products.models import Category, Item, FranchiseItem, VariantDetail
 from customers.models import Customer, CustomerAddress, Cart
+from orders.models import Order
 
 
 class FranchiseSerializer(ModelSerializer):
@@ -391,3 +392,95 @@ class TimeSlotSerializer(ModelSerializer):
     def get_to_time(self, obj):
 
         return obj.to_time.strftime('%I:%M %p')
+    
+
+class CartOrderSerializer(ModelSerializer):
+
+    name = serializers.SerializerMethodField()
+    cart_qty = serializers.SerializerMethodField()
+    unit = serializers.SerializerMethodField()
+
+
+    class Meta:
+        fields = ("id","cart_amount","cart_qty","unit", "name")
+        model = Cart
+
+    def get_name(self, instance):
+        request = self.context.get("request")
+        if instance.item is not None:
+            item = instance.item.item
+        elif instance.today_item is not None:
+            item = instance.today_item.franchise_item.item
+        elif instance.flash_item is not None:
+            item = instance.flash_item.franchise_item.item
+        else:
+            item = instance.varient
+
+        name = item.name
+        return name
+    
+
+    def get_cart_qty(self, instance):
+        request = self.context.get("request")
+        cart_qty=0
+        if instance.item is not None:
+            item = instance.item
+            qty=item.unit_quantity
+            cart_qty=instance.quantity * qty
+        elif instance.today_item is not None:
+            item = instance.today_item.franchise_item
+            qty=item.unit_quantity
+            cart_qty=instance.quantity * qty
+        elif instance.flash_item is not None:
+            item = instance.flash_item.franchise_item
+            qty=item.unit_quantity
+            cart_qty=instance.quantity * qty
+        else:
+            variant = instance.varient
+            item = variant.item
+            qty=item.unit_quantity
+            cart_qty=instance.quantity * qty
+
+        return cart_qty
+    
+    def get_unit(self, instance):
+        request = self.context.get("request")
+        if instance.item is not None:
+            item = instance.item
+        elif instance.today_item is not None:
+            item = instance.today_item.franchise_item
+        elif instance.flash_item is not None:
+            item = instance.flash_item.franchise_item
+        else:
+            varient = instance.varient
+            item = varient.item
+
+        unit = item.unit
+        return unit
+
+class OrderSerializer(ModelSerializer):
+
+    franchise = serializers.SerializerMethodField()
+    district = serializers.SerializerMethodField()
+    cart_items = serializers.SerializerMethodField()
+
+    class Meta:
+        fields = ("id","order_id","franchise","district","cart_items","address","actual_price","offer_price","delivery_charge","final_price")
+        model = Order
+
+    
+    def get_franchise(self, instance):
+        request = self.context.get("request")
+        franchise = instance.franchise
+        return franchise.name
+    
+    def get_district(self, instance):
+        request = self.context.get("request")
+        franchise = instance.franchise
+        return franchise.district
+    
+    def get_cart_items(self, instance):
+        request = self.context.get("request")
+        instances = instance.cart_items
+        serializer = CartOrderSerializer(instances, many=True, context={"request": request})
+        return serializer.data
