@@ -1011,6 +1011,12 @@ def place_order(request):
     final_price = request.data.get('final_price')
     payment_method = request.data.get('payment_method')
 
+    delivery_charge = round(float(delivery_charge))
+    delivery_charge= int(delivery_charge)
+
+    final_price = round(float(final_price))
+    final_price=int(final_price)
+
     previous = Order.objects.all().first()
 
     if delivery_type == "IN":

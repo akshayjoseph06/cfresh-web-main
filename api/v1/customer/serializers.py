@@ -87,8 +87,8 @@ class VarientsSerializer(ModelSerializer):
         request = self.context.get("request")
         user=request.user
         customer = Customer.objects.get(user=user)
-        if Cart.objects.filter(varient=instance,customer=customer).exists():
-            cart = Cart.objects.get(varient=instance,customer=customer)
+        if Cart.objects.filter(varient=instance,customer=customer,is_ordered=False).exists():
+            cart = Cart.objects.get(varient=instance,customer=customer,is_ordered=False)
         else:
             cart= None
         serializer = ItemCartSerializer(cart, context={"request": request})
@@ -121,8 +121,8 @@ class ProductsSerializer(ModelSerializer):
         request = self.context.get("request")
         user=request.user
         customer = Customer.objects.get(user=user)
-        if Cart.objects.filter(item=instance,customer=customer).exists():
-            cart = Cart.objects.get(item=instance,customer=customer)
+        if Cart.objects.filter(item=instance,customer=customer,is_ordered=False).exists():
+            cart = Cart.objects.get(item=instance,customer=customer,is_ordered=False)
         else:
             cart= None
         serializer = ItemCartSerializer(cart, context={"request": request})
@@ -148,8 +148,8 @@ class FlashSaleSerializer(ModelSerializer):
         request = self.context.get("request")
         user=request.user
         customer = Customer.objects.get(user=user)
-        if Cart.objects.filter(flash_item=instance,customer=customer).exists():
-            cart = Cart.objects.get(flash_item=instance,customer=customer)
+        if Cart.objects.filter(flash_item=instance,customer=customer,is_ordered=False).exists():
+            cart = Cart.objects.get(flash_item=instance,customer=customer,is_ordered=False)
         else:
             cart= None
         serializer = ItemCartSerializer(cart, context={"request": request})
@@ -175,8 +175,8 @@ class TodayDealSerializer(ModelSerializer):
         request = self.context.get("request")
         user=request.user
         customer = Customer.objects.get(user=user)
-        if Cart.objects.filter(today_item=instance,customer=customer).exists():
-            cart = Cart.objects.get(today_item=instance,customer=customer)
+        if Cart.objects.filter(today_item=instance,customer=customer,is_ordered=False).exists():
+            cart = Cart.objects.get(today_item=instance,customer=customer,is_ordered=False)
         else:
             cart= None
         serializer = ItemCartSerializer(cart, context={"request": request})
