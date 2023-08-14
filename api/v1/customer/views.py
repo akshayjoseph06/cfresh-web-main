@@ -1050,17 +1050,16 @@ def place_order(request):
 
         response_data = {
             "staus_code": 6000,
-            "data": {
-                "message": "Order Placed",
-            },
+            "data": {},
+            "message": "Order Placed",
+
         }
 
     else:
         response_data = {
             "staus_code": 6000,
-            "data": {
-                "message": "Order Not Placed",
-            },
+            "data": {},
+            "message": "Order Not Placed",
         }
 
     return Response(response_data)
