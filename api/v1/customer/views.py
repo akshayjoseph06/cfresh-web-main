@@ -74,7 +74,7 @@ def otp_send(request):
             fcm_device.delete()
             fcm_device = FCMDevice()
             fcm_device.registration_id = device_id
-            fcm_device.user = user
+            fcm_device.user = user.id
             if device_type == 'ios':
                 fcm_device.type = "ios"
             else:
@@ -83,7 +83,7 @@ def otp_send(request):
         else:
             fcm_device = FCMDevice()
             fcm_device.registration_id = device_id
-            fcm_device.user = user
+            fcm_device.user = user.id
             if device_type == 'ios':
                 fcm_device.type = "ios"
             else:
@@ -126,7 +126,7 @@ def otp_send(request):
 
         fcm_device = FCMDevice()
         fcm_device.registration_id = device_id
-        fcm_device.user = user
+        fcm_device.user = user.id
         if device_type == 'ios':
             fcm_device.type = "ios"
         else:
