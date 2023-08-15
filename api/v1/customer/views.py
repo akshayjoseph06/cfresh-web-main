@@ -72,11 +72,7 @@ def otp_send(request):
         if FCMDevice.objects.get(user=user).exists():
             fcm_device = FCMDevice.objects.get(user=user)
             fcm_device.delete()
-            fcm_device = FCMDevice.objects.create(
-                registration_id=device_id,
-                user=user.id,
-                type=device_type,
-            )
+            fcm_device = FCMDevice()
             fcm_device.registration_id = device_id
             fcm_device.user = user.id
             if device_type == 'ios':
@@ -99,6 +95,9 @@ def otp_send(request):
             "data": {
                 "message": "OTP Send to your number",
                 "phone_number":phone_number,
+                "device_id":device_id,
+                "user":user.id,
+                "device_type": device_type,
             },
         }
 
