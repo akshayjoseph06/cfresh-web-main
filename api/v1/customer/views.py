@@ -16,6 +16,7 @@ from django.db.models import Q
 
 from cfresh.settings import MAP_API
 from users.models import User, OTPVerifier
+from fcm_django.models import FCMDevice
 from customers.models import Customer, CustomerAddress, Cart
 from franchise.models import Franchise, TimeSlot
 from promotions.models import Banner, StaticBanner, Poster, FlashSale, TodayDeal
@@ -24,6 +25,7 @@ from managers.models import CompanyContact
 from .serializers import FranchiseSerializer, BannerSerializer, StaticSerializer, PosterSerializer, CategorySerializer, ProductsSerializer, FlashSaleSerializer, TodayDealSerializer, AddressListSerializer, AddAddressSerializer, CartListSerializer, TimeSlotSerializer, OrderSerializer
 from franchise.utils import haversine
 from orders.models import Order
+from orders import Checksum
 
 conn = http.client.HTTPSConnection("api.msg91.com")
 api_key = MAP_API
@@ -37,6 +39,8 @@ url ='https://maps.googleapis.com/maps/api/distancematrix/json?'
 def otp_send(request):
     
     phone_number=request.data.get('phone_number')
+    device_id = request.data.get('deviceID')
+    device_type = request.data.get('device_type')
 
     if User.objects.filter(phone_number=phone_number).exists():
         user = User.objects.get(phone_number=phone_number)
@@ -64,6 +68,27 @@ def otp_send(request):
         conn.request("POST", "/api/v2/sendsms", payload, headers)
         res = conn.getresponse()
         data = res.read()
+
+        if FCMDevice.objects.get(user=user).exists():
+            fcm_device = FCMDevice.objects.get(user=user)
+            fcm_device.delete()
+            fcm_device = FCMDevice()
+            fcm_device.registration_id = device_id
+            fcm_device.user = user
+            if device_type == 'ios':
+                fcm_device.type = "ios"
+            else:
+                fcm_device.type = "android"
+            fcm_device.save()
+        else:
+            fcm_device = FCMDevice()
+            fcm_device.registration_id = device_id
+            fcm_device.user = user
+            if device_type == 'ios':
+                fcm_device.type = "ios"
+            else:
+                fcm_device.type = "android"
+            fcm_device.save()
 
         response_data = {
             "status_code" : 6000,
@@ -98,6 +123,15 @@ def otp_send(request):
         conn.request("POST", "/api/v2/sendsms", payload, headers)
         res = conn.getresponse()
         data = res.read()
+
+        fcm_device = FCMDevice()
+        fcm_device.registration_id = device_id
+        fcm_device.user = user
+        if device_type == 'ios':
+            fcm_device.type = "ios"
+        else:
+            fcm_device.type = "android"
+        fcm_device.save()
 
         response_data = {
             "status_code" : 6000,
@@ -1064,6 +1098,9 @@ def place_order(request):
 
         }
 
+        return Response(response_data)
+
+
     elif payment_method == "PTM":
         cart_items = Cart.objects.filter(franchise=franchise, customer=customer, is_ordered=False)
         order = Order.objects.create(
@@ -1086,14 +1123,78 @@ def place_order(request):
             order.cart_items.add(item)
             item.is_ordered = True
             item.save()
-        response_data = {
-            "staus_code": 6000,
-            "data": {},
-            "message": "Order Initiated",
-        }
 
-    return Response(response_data)
+        protocol = "http://"
+        if request.is_secure():
+            protocol = "https://"
+
+        host = request.get_host()
+
+        callback = protocol + host + "/api/v1/customer/order/payment/"
+
+        param_dict = {
+            'MID': 'PtkJAE93180656066727',
+            'ORDER_ID': str(order_id),
+            'TXN_AMOUNT': str(final_price),
+            'CUST_ID': customer.user.phone_number,
+            'INDUSTRY_TYPE_ID': 'Retail',
+            'WEBSITE': 'WEBSTAGING',
+            'CHANNEL_ID': 'WAP',
+            'CALLBACK_URL': callback,
+            # this is the url of handlepayment function, paytm will send a POST request to the fuction associated with this CALLBACK_URL
+        }
+        param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict, "4GVUX#0vvTNOqbFB")
+
+        return Response({'param_dict': param_dict})
     
+
+
+@api_view(["POST"])
+@permission_classes ([AllowAny])
+def handle_payment(request):
+    checksum = ""
+    form = request.POST
+
+    response_dict = {}
+    order = None  # initialize the order varible with None
+
+    for i in form.keys():
+        response_dict[i] = form[i]
+        if i == 'CHECKSUMHASH':
+            # 'CHECKSUMHASH' is coming from paytm and we will assign it to checksum variable to verify our paymant
+            checksum = form[i]
+
+        if i == 'ORDERID':
+            # we will get an order with id==ORDERID to turn isPaid=True when payment is successful
+            order = Order.objects.get(order_id=form[i])
+
+    # we will verify the payment using our merchant key and the checksum that we are getting from Paytm request.POST
+    verify = Checksum.verify_checksum(response_dict, "4GVUX#0vvTNOqbFB", checksum)
+    if verify:
+        if response_dict['RESPCODE'] == '01':
+            order.order_status = "PL"
+            order.payment_status= "CO"
+            order.save()
+            response_data = {
+                "staus_code": 6000,
+                "data": {},
+                "message": "Order Placed.",
+
+            }
+
+            return Response(response_data)
+        else:
+            order.order_status = "CA"
+            order.payment_status= "FA"
+            order.save()
+            response_data = {
+                "staus_code": 6001,
+                "data": {},
+                "message": "Order Failed.",
+
+            }
+
+            return Response(response_data)    
 
 
 @api_view(["GET"])
@@ -1115,10 +1216,3 @@ def orders(request):
         "data":  serializer.data,
     }
     return Response(response_data)
-
-
-@api_view(["POST"])
-@permission_classes ([IsAuthenticated])
-def handle_payment(request):
-    user=request.user
-    customer = Customer.objects.get(user=user)

@@ -878,30 +878,45 @@ def franchise_users(request):
 def franchise_users_add(request):
     if request.method == "POST":
         form = UserForm(request.POST,request.FILES)
+        franchise= request.POST.get("franchise")
         if form.is_valid():
             instance= form.save(commit=False)
-            instance.save()
 
-            return HttpResponseRedirect(reverse("managers:products"))
+            user = User.objects.create_user(
+                first_name = instance.first_name,
+                phone_number = instance.phone_number,
+                email = instance.email,
+                password = instance.password,
+                is_franchise=True
+            )
+
+            franchise_user = FranchiseUser.objects.create(
+                user=user,
+                franchise=franchise,
+            )
+
+            franchise_user.save()
+
+            return HttpResponseRedirect(reverse("managers:franchise_users"))
         else:
             message = generate_form_errors(form)
-            form = ItemForm()
+            form = UserForm()
             context= {
-                "title": "Manager Dashboard | Add Item",
-                "sub_title": "Products",
-                "name": "Add Item",
+                "title": "Manager Dashboard | Users",
+                "sub_title": "Franchise",
+                "name": "Users",
                 "error": True,
                 "message": message,
                 "form": form,
             }
-            return render(request, "manager/products-add.html", context=context)
+            return render(request, "manager/f-users-add.html", context=context)
 
     else:
-        form = ItemForm()
+        form = UserForm()
         context= {
-            "title": "Manager Dashboard | Add Item",
-            "sub_title": "Products",
-            "name": "Add Item",
+            "title": "Manager Dashboard | Users",
+            "sub_title": "Franchise",
+            "name": "Users",
             "form": form,
         }
-        return render(request, "manager/products-add.html", context=context)
+        return render(request, "manager/f-users-add.html", context=context)
