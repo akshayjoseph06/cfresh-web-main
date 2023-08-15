@@ -141,6 +141,9 @@ def otp_send(request):
             "data": {
                 "message": "OTP Send to your number",
                 "phone_number":phone_number,
+                "device_id":device_id,
+                "user":user.id,
+                "device_type": device_type,
             },
         }
 
