@@ -940,6 +940,14 @@ def checkout(request):
 
     distance = haversine(long2, lat2, long1, lat1)
 
+    previous = Order.objects.all().first()
+
+    if previous is not None:
+        id = previous.id
+        order_id = f'ORD000{id+1}'       
+    else:
+        order_id = "ORD0001"
+
     if distance < delivery_distance:
         req = requests.get(url + f'origins={lat2}%2C{long2}&destinations={lat1}%2C{long1}&key={api_key}')
         res = req.json()
@@ -952,7 +960,6 @@ def checkout(request):
             delivery_charge = extra_charge + base_charge
         else:
             delivery_charge = base_charge
-
         
         if delivery_type == "IN":
             response_data = {
@@ -966,6 +973,8 @@ def checkout(request):
                     "delivery_day": delivery_day,
                     "wallet": wallet,
                     "address": address_data.data,
+                    "cust_id": customer.user.phone_number,
+                    "ord_id": order_id,
                 },
             }
         else:
@@ -980,6 +989,8 @@ def checkout(request):
                     "delivery_day": delivery_day,
                     "wallet": wallet,
                     "address": address_data.data,
+                    "cust_id": customer.user.phone_number,
+                    "ord_id": order_id,
                 },
             }
     else:
