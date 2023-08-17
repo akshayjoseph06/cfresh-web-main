@@ -89,9 +89,6 @@ def otp_send(request):
                 "data": {
                     "message": "OTP Send to your number",
                     "phone_number":phone_number,
-                    "device_id":device_id,
-                    "user":user,
-                    "device_type": device_type,
                 },
             }
         return Response(response_data)
@@ -142,9 +139,6 @@ def otp_send(request):
                 "data": {
                     "message": "OTP Send to your number",
                     "phone_number":phone_number,
-                    "device_id":device_id,
-                    "user":user,
-                    "device_type": device_type,
                 },
             }
 
