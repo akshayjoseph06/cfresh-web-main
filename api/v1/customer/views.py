@@ -74,7 +74,7 @@ def otp_send(request):
             fcm_device.delete()
             fcm_device = FCMDevice()
             fcm_device.registration_id = device_id
-            fcm_device.user = user.id
+            fcm_device.user = user
             if device_type == 'ios':
                 fcm_device.type = "ios"
             else:
@@ -83,7 +83,7 @@ def otp_send(request):
         else:
             fcm_device = FCMDevice()
             fcm_device.registration_id = device_id
-            fcm_device.user = user.id
+            fcm_device.user = user
             if device_type == 'ios':
                 fcm_device.type = "ios"
             else:
@@ -96,7 +96,7 @@ def otp_send(request):
                 "message": "OTP Send to your number",
                 "phone_number":phone_number,
                 "device_id":device_id,
-                "user":user.id,
+                "user":user,
                 "device_type": device_type,
             },
         }
@@ -129,7 +129,7 @@ def otp_send(request):
 
         fcm_device = FCMDevice()
         fcm_device.registration_id = device_id
-        fcm_device.user = user.id
+        fcm_device.user = user
         if device_type == 'ios':
             fcm_device.type = "ios"
         else:
@@ -142,7 +142,7 @@ def otp_send(request):
                 "message": "OTP Send to your number",
                 "phone_number":phone_number,
                 "device_id":device_id,
-                "user":user.id,
+                "user":user,
                 "device_type": device_type,
             },
         }
@@ -181,7 +181,7 @@ def otp_verify(request):
             response_data = {
                 "status_code" : 6000,
                 "data": {
-                    "id": user.id,
+                    "id": user,
                     "pnone_number": user.phone_number,
                     "customer":customer,
                     "franchise":franchise,
