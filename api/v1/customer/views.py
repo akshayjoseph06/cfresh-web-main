@@ -84,17 +84,18 @@ def otp_send(request):
                 fcm_device.type = "android"
             fcm_device.save()
 
-        response_data = {
-            "status_code" : 6000,
-            "data": {
-                "message": "OTP Send to your number",
-                "phone_number":phone_number,
-                "device_id":device_id,
-                "user":user,
-                "device_type": device_type,
-            },
-        }
-
+            response_data = {
+                "status_code" : 6000,
+                "data": {
+                    "message": "OTP Send to your number",
+                    "phone_number":phone_number,
+                    "device_id":device_id,
+                    "user":user,
+                    "device_type": device_type,
+                },
+            }
+        return Response(response_data)
+        
     else:
         user= User.objects.create_user(
             phone_number=phone_number,
@@ -136,18 +137,18 @@ def otp_send(request):
                 fcm_device.type = "android"
             fcm_device.save()
 
-        response_data = {
-            "status_code" : 6000,
-            "data": {
-                "message": "OTP Send to your number",
-                "phone_number":phone_number,
-                "device_id":device_id,
-                "user":user,
-                "device_type": device_type,
-            },
-        }
+            response_data = {
+                "status_code" : 6000,
+                "data": {
+                    "message": "OTP Send to your number",
+                    "phone_number":phone_number,
+                    "device_id":device_id,
+                    "user":user,
+                    "device_type": device_type,
+                },
+            }
 
-    return Response(response_data)
+        return Response(response_data)
 
 
 @api_view(["POST"])
