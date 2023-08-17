@@ -876,9 +876,11 @@ def franchise_users(request):
 @login_required(login_url="/manager/login")
 @allow_manager
 def franchise_users_add(request):
+    instances = Franchise.objects.all()
     if request.method == "POST":
         form = UserForm(request.POST,request.FILES)
         franchise= request.POST.get("franchise")
+        franchise= Franchise.objects.get(id=franchise)
         if form.is_valid():
             instance= form.save(commit=False)
 
@@ -908,6 +910,7 @@ def franchise_users_add(request):
                 "error": True,
                 "message": message,
                 "form": form,
+                "instances":instances,
             }
             return render(request, "manager/f-users-add.html", context=context)
 
@@ -918,5 +921,138 @@ def franchise_users_add(request):
             "sub_title": "Franchise",
             "name": "Users",
             "form": form,
+            "instances":instances,
         }
         return render(request, "manager/f-users-add.html", context=context)
+    
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def franchise_users_edit(request,id):
+    instance = FranchiseUser.objects.get(id=id)
+    user= instance.user
+
+    if request.method == "POST":
+        form = UserForm(request.POST,request.FILES, instance=user)
+        password = request.POST.get('password')
+        if form.is_valid():
+            instance= form.save(commit=False)
+
+            user.first_name = instance.first_name
+            user.phone_number = instance.phone_number
+            user.email = instance.email
+
+            user.set_password(password)
+            
+            user.save()
+
+            return HttpResponseRedirect(reverse("managers:franchise_users"))
+        else:
+            message = generate_form_errors(form)
+            form = UserForm(instance=user)
+            context= {
+                "title": "Manager Dashboard | Users",
+                "sub_title": "Franchise",
+                "name": "Users",
+                "error": True,
+                "message": message,
+                "form": form,
+                "instance":user,
+            }
+            return render(request, "manager/f-users-edit.html", context=context)
+
+    else:
+        form = UserForm(instance=user)
+        context= {
+            "title": "Manager Dashboard | Users",
+            "sub_title": "Franchise",
+            "name": "Users",
+            "form": form,
+            "instance":user,
+        }
+        return render(request, "manager/f-users-edit.html", context=context)
+
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def franchise_users_delete(request, id):
+    instance = FranchiseUser.objects.get(id=id)
+    user=instance.user
+    instance.delete()
+    user.delete()
+    
+    return HttpResponseRedirect(reverse("managers:franchise_users"))
+
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def deliveryboys(request):
+    user=request.user
+    manager= Manager.objects.get(user=user)
+
+    instances=DeliveryAgent.objects.all()
+    
+    context= {
+        "title": "C-FRESH | Dashboard",
+        "sub_title": "Users",
+        "name": "Franchise Users",
+        "manager":manager,
+        "instances":instances,
+    }
+    return render(request, "manager/d-boys.html", context=context)
+
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def deliveryboys_add(request,id):
+    timeslot = TimeSlot.objects.get(id=id)
+    franchise = timeslot.franchise
+
+    if request.method == "POST":
+        form = UserForm(request.POST,request.FILES)
+        if form.is_valid():
+            instance= form.save(commit=False)
+
+            user = User.objects.create_user(
+                first_name = instance.first_name,
+                phone_number = instance.phone_number,
+                email = instance.email,
+                password = instance.password,
+                is_delivery=True
+            )
+
+            delivery_boy = DeliveryAgent.objects.create(
+                user=user,
+                franchise=franchise,
+                time_slot = timeslot,
+                delivery_type="TS"
+            )
+
+            delivery_boy.save()
+
+            return HttpResponseRedirect(reverse("managers:deliveryboys"))
+        else:
+            message = generate_form_errors(form)
+            form = UserForm()
+            context= {
+                "title": "Manager Dashboard | Users",
+                "sub_title": "Franchise",
+                "name": "Users",
+                "error": True,
+                "message": message,
+                "form": form,
+            }
+            return render(request, "manager/d-boys-add.html", context=context)
+
+    else:
+        form = UserForm()
+        context= {
+            "title": "Manager Dashboard | Users",
+            "sub_title": "Franchise",
+            "name": "Users",
+            "form": form,
+        }
+        return render(request, "manager/d-boys-add.html", context=context)

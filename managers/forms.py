@@ -13,7 +13,7 @@ class UserForm(forms.ModelForm):
         fields = ["first_name","phone_number","email","password"]
 
         widgets = {
-            "first_name":forms.widgets.TextInput(attrs={"class": "form-control","placeholder":"Owner Name"}),
+            "first_name":forms.widgets.TextInput(attrs={"class": "form-control","placeholder":"Full Name"}),
             "phone_number":forms.widgets.NumberInput(attrs={"class": "form-control","placeholder":"Mobile Number"}),
             "email":forms.widgets.EmailInput(attrs={"class": "form-control","placeholder":"Email Address"}),
             "password":forms.widgets.PasswordInput(attrs={"class": "form-control","placeholder":"Password"}),

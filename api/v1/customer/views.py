@@ -176,7 +176,7 @@ def otp_verify(request):
             response_data = {
                 "status_code" : 6000,
                 "data": {
-                    "id": user,
+                    "id": user.id,
                     "pnone_number": user.phone_number,
                     "customer":customer,
                     "franchise":franchise,

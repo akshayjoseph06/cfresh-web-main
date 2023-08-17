@@ -48,11 +48,11 @@ urlpatterns = [
 
     path('franchise/users/', views.franchise_users, name="franchise_users"),
     path('franchise/users/add/', views.franchise_users_add, name="franchise_users_add"),
-    # path('franchise/users/edit/<int:id>/', views.franchise_users_edit, name="franchise_users_edit"),
-    # path('franchise/users/delete/<int:id>/', views.franchise_users_delete, name="franchise_users_delete"),
+    path('franchise/users/edit/<int:id>/', views.franchise_users_edit, name="franchise_users_edit"),
+    path('franchise/users/delete/<int:id>/', views.franchise_users_delete, name="franchise_users_delete"),
 
-    # path('delivery-boys/', views.deliveryboys, name="deliveryboys"),
-    # path('delivery-boys/add/', views.deliveryboys_add, name="deliveryboys_add"),
+    path('delivery-boys/', views.deliveryboys, name="deliveryboys"),
+    path('delivery-boys/add/<int:id>/', views.deliveryboys_add, name="deliveryboys_add"),
     # path('delivery-boys/edit/<int:id>/', views.deliveryboys_edit, name="deliveryboys_edit"),
     # path('delivery-boys/delete/<int:id>/', views.deliveryboys_delete, name="deliveryboys_delete"),
 
