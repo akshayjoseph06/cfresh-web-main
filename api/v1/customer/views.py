@@ -69,18 +69,12 @@ def otp_send(request):
         res = conn.getresponse()
         data = res.read()
 
-        if FCMDevice.objects.get(user=user).exists():
-            fcm_device = FCMDevice.objects.get(user=user)
-            fcm_device.delete()
-            fcm_device = FCMDevice()
-            fcm_device.registration_id = device_id
-            fcm_device.user = user
-            if device_type == 'ios':
-                fcm_device.type = "ios"
-            else:
-                fcm_device.type = "android"
-            fcm_device.save()
-        else:
+        if device_id:
+            try:
+                fcm_device = FCMDevice.objects.get(user=user)
+                fcm_device.delete()
+            except FCMDevice.DoesNotExist:
+                pass
             fcm_device = FCMDevice()
             fcm_device.registration_id = device_id
             fcm_device.user = user
@@ -127,14 +121,20 @@ def otp_send(request):
         res = conn.getresponse()
         data = res.read()
 
-        fcm_device = FCMDevice()
-        fcm_device.registration_id = device_id
-        fcm_device.user = user
-        if device_type == 'ios':
-            fcm_device.type = "ios"
-        else:
-            fcm_device.type = "android"
-        fcm_device.save()
+        if device_id:
+            try:
+                fcm_device = FCMDevice.objects.get(user=user)
+                fcm_device.delete()
+            except FCMDevice.DoesNotExist:
+                pass
+            fcm_device = FCMDevice()
+            fcm_device.registration_id = device_id
+            fcm_device.user = user
+            if device_type == 'ios':
+                fcm_device.type = "ios"
+            else:
+                fcm_device.type = "android"
+            fcm_device.save()
 
         response_data = {
             "status_code" : 6000,
