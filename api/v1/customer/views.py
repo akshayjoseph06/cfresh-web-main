@@ -1183,7 +1183,7 @@ def handle_payment(request):
             # 'CHECKSUMHASH' is coming from paytm and we will assign it to checksum variable to verify our paymant
             checksum = form[i]
 
-        if i == 'ORDERID':
+        if i == 'ORDER_ID':
             # we will get an order with id==ORDERID to turn isPaid=True when payment is successful
             order = Order.objects.get(order_id=form[i])
 
