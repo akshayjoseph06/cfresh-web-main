@@ -10,6 +10,7 @@ from django.http.response import HttpResponseRedirect
 
 from main.decorators import allow_manager
 from main.functions import generate_form_errors
+from firebase_admin import messaging
 
 from cfresh.settings import FCM_DJANGO_SETTINGS
 from fcm_django.models import FCMDevice
@@ -1121,9 +1122,11 @@ def notifications_send(request,id):
             title=title,
             body=body,
         )
-        fcm_status = device.send_message(title=title,
-                                            message=body,
-                                            api_key=FCM_DJANGO_SETTINGS['FCM_SERVER_KEY'])
+        message = messaging.Message(
+            notification=messaging.Notification(title=title, body=body),
+            token=device.registration_id,
+        )
+
         return HttpResponseRedirect(reverse("managers:notifications"))
     else:
         context= {
