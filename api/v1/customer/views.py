@@ -1105,7 +1105,7 @@ def place_order(request):
 
         response_data = {
             "staus_code": 6000,
-            "data": {},
+            "param_dict": {},
             "message": "Order Placed",
 
         }
@@ -1122,7 +1122,7 @@ def place_order(request):
             address=address,
             payment_method=payment_method,
             payment_status="TD",
-            order_status="PL",
+            order_status="IN",
             actual_price=final_price,
             final_price=final_price,
             time_slot=time_slot,
@@ -1157,7 +1157,14 @@ def place_order(request):
         }
         param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict, "4GVUX#0vvTNOqbFB")
 
-        return Response({'param_dict': param_dict})
+        response_data = {
+            "staus_code": 6001,
+            "param_dict": param_dict,
+            "message": "Order Initiated",
+
+        }
+
+        return Response(response_data)
     
 
 
