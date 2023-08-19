@@ -53,8 +53,13 @@ urlpatterns = [
 
     path('delivery-boys/', views.deliveryboys, name="deliveryboys"),
     path('delivery-boys/add/<int:id>/', views.deliveryboys_add, name="deliveryboys_add"),
+    # path('delivery-boys/add/in/<int:id>/', views.deliveryboys_add_in, name="deliveryboys_add_in"),
     # path('delivery-boys/edit/<int:id>/', views.deliveryboys_edit, name="deliveryboys_edit"),
     # path('delivery-boys/delete/<int:id>/', views.deliveryboys_delete, name="deliveryboys_delete"),
+
+    path('notifications/', views.notifications, name="notifications"),
+    path('notifications/send/<int:id>/', views.notifications_send, name="notifications_send"),
+    # path('notifications/send/all/', views.notifications_send_all, name="notifications_send_all"),
 
     # path('banners/', views.banners, name="banners"),
     # path('banners/add/', views.banners_add, name="banners_add"),

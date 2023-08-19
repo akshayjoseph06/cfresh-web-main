@@ -11,6 +11,8 @@ from django.http.response import HttpResponseRedirect
 from main.decorators import allow_manager
 from main.functions import generate_form_errors
 
+from cfresh.settings import FCM_SERVER_KEY
+from fcm_django.models import FCMDevice
 from managers.models import Manager
 from products.models import Category, Item, VariantDetail, FranchiseItem
 from franchise.models import FranchiseUser, Franchise, TimeSlot
@@ -1056,3 +1058,80 @@ def deliveryboys_add(request,id):
             "form": form,
         }
         return render(request, "manager/d-boys-add.html", context=context)
+    
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def deliveryboys_add_in(request,id):
+    pass
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def deliveryboys_edit(request,id):
+    pass
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def deliveryboys_delete(request,id):
+    pass
+
+
+
+################################################################
+################   NOTIFICATIONS      ##########################
+################################################################
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def notifications(request):
+    user=request.user
+    manager= Manager.objects.get(user=user)
+
+    instances=Notification.objects.all()
+    
+    context= {
+        "title": "C-FRESH | Dashboard",
+        "sub_title": "Notifications",
+        "name": "Notifications List",
+        "manager":manager,
+        "instances":instances,
+    }
+    return render(request, "manager/notifications.html", context=context)
+
+
+@login_required(login_url="/manager/login")
+@allow_manager
+def notifications_send(request,id):
+    user=request.user
+    manager= Manager.objects.get(user=user)
+
+    customer = Customer.objects.get(id=id)
+
+    device = FCMDevice.objects.get(user=customer.user.id)
+
+    if request.method == "POST":
+        title = request.POST.get("title")
+        body = request.POST.get("body")
+
+        notification = Notification.objects.create(
+            sent_to=customer.user,
+            title=title,
+            body=body,
+        )
+        fcm_status = device.send_message(title=request.data.get('title'),
+                                            body=request.data.get('body'),
+                                            api_key=FCM_SERVER_KEY)
+        return HttpResponseRedirect(reverse("managers:notifications"))
+    else:
+        context= {
+            "title": "C-FRESH | Dashboard",
+            "sub_title": "Notifications",
+            "name": "Notification Send",
+            "manager":manager,
+        }
+        return render(request, "manager/notification_send.html", context=context)
+
+
