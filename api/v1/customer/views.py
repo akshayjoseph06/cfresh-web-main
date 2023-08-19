@@ -1155,7 +1155,7 @@ def place_order(request):
             'CALLBACK_URL': callback,
             # this is the url of handlepayment function, paytm will send a POST request to the fuction associated with this CALLBACK_URL
         }
-        param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict, "4GVUX#0vvTNOqbFB")
+        param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict, '4GVUX#0vvTNOqbFB')
 
         response_data = {
             "staus_code": 6001,
