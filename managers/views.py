@@ -14,6 +14,7 @@ from firebase_admin import messaging
 
 from cfresh.settings import FCM_DJANGO_SETTINGS
 from fcm_django.models import FCMDevice
+from fcm_django.fcm import fcm_send_topic_message
 from managers.models import Manager
 from products.models import Category, Item, VariantDetail, FranchiseItem
 from franchise.models import FranchiseUser, Franchise, TimeSlot
@@ -1122,10 +1123,7 @@ def notifications_send(request,id):
             title=title,
             body=body,
         )
-        message = messaging.Message(
-            notification=messaging.Notification(title=title, body=body),
-            token=device.registration_id,
-        )
+        
 
         return HttpResponseRedirect(reverse("managers:notifications"))
     else:

@@ -1157,7 +1157,7 @@ def place_order(request):
             'CALLBACK_URL': callback,
             # this is the url of handlepayment function, paytm will send a POST request to the fuction associated with this CALLBACK_URL
         }
-        param_dict['CHECKSUMHASH'] = Checksum.generateSignature(param_dict, '4GVUX#0vvTNOqbFB')
+        param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict, '4GVUX#0vvTNOqbFB')
 
         response_data = {
             "staus_code": 6001,
@@ -1190,7 +1190,7 @@ def handle_payment(request):
             order = Order.objects.get(order_id=form[i])
 
     # we will verify the payment using our merchant key and the checksum that we are getting from Paytm request.POST
-    verify = Checksum.verifySignature(response_dict, "4GVUX#0vvTNOqbFB", checksum)
+    verify = Checksum.verify_checksum(response_dict, "4GVUX#0vvTNOqbFB", checksum)
     if verify:
         if response_dict['RESPCODE'] == '01':
             order.order_status = "PL"
